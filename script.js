@@ -90,6 +90,21 @@ document.querySelector('#passage-form').addEventListener('submit', async event =
   } catch(error) { status('#passage-status',error.message,true); }
   finally { button.disabled=false; }
 });
+document.querySelector('#revise-passage').addEventListener('click',async event=>{
+  const button=event.currentTarget;
+  const draft=document.querySelector('#generated-passage').value.trim();
+  const instructions=document.querySelector('#passage-revision').value.trim();
+  if(!draft){status('#revision-status','Enter a draft before requesting a revision.',true);return;}
+  if(!instructions){status('#revision-status','Describe the changes you would like first.',true);document.querySelector('#passage-revision').focus();return;}
+  button.disabled=true;
+  status('#revision-status','Revising your draft…');
+  try{
+    const result=await api('/api/teacher/assistant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({task:'revise',draft,instructions})});
+    document.querySelector('#generated-passage').value=result.text;
+    status('#revision-status','Revised draft ready. You can keep editing it here.');
+  }catch(error){status('#revision-status',error.message,true);}
+  finally{button.disabled=false;}
+});
 document.querySelector('#use-generated-passage').addEventListener('click',()=>{
   const text=document.querySelector('#generated-passage').value.trim();
   if(!text) return;
@@ -97,7 +112,7 @@ document.querySelector('#use-generated-passage').addEventListener('click',()=>{
   if(!target) target=addBuilderQuestion();
   const type=target.querySelector('.type-input'); type.value='open'; type.dispatchEvent(new Event('change'));
   const prompt=target.querySelector('.prompt-input'); prompt.value=text; prompt.focus();
-  status('#create-status','Passage added as an open-ended question. Edit the draft before you publish!');
+  status('#create-status','Your edited passage has been added. You can make more changes before publishing.');
   builder.scrollIntoView({behavior:'smooth',block:'center'});
 });
 

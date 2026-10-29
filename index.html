@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=teacher-workspace-2">
+  <link rel="stylesheet" href="styles.css?v=teacher-workspace-3">
 </head>
 <body>
   <header class="topbar"><a class="brand" href="#" aria-label="The Scraggies, Class 5B"><img class="brand-mark-image" src="assets/scraggy-pokemon.webp" alt=""><span class="brand-name">THE SCRAGGIES<br><small>YOUR TEST, OUR CONFUSION</small></span></a><span class="topbar-label">ENGLISH WITH MRS WRONG · FUN IS RIGHT</span></header>
@@ -41,8 +41,8 @@
           <label for="passage-notes">Anything to include? <small>Optional</small></label><input id="passage-notes" maxlength="300" placeholder="Vocabulary, theme, or plot idea">
           <button class="secondary-button" type="submit">Generate passage draft</button><p class="status" id="passage-status" role="status" aria-live="polite"></p>
         </form>
-        <div class="ai-result hidden" id="passage-result"><label for="generated-passage">Draft passage and question · edit freely</label><textarea id="generated-passage" rows="9"></textarea><button class="secondary-button" id="use-generated-passage" type="button">Add as an open-ended question</button></div>
-        <p class="ai-privacy">The topic and optional notes are sent to Cloudflare Workers AI using Meta Llama 3.2 1B. Do not include student names or private information. Please review AI-generated material before use.</p>
+        <div class="ai-result hidden" id="passage-result"><label for="generated-passage">Your passage draft · click in the text to edit it</label><textarea id="generated-passage" maxlength="4000" rows="9" aria-describedby="draft-edit-help"></textarea><p id="draft-edit-help" class="draft-edit-help">You can rewrite any part yourself. To get a new version, describe the changes below and ask Llama to revise your current draft.</p><label for="passage-revision">How should the draft change? <small>Optional</small></label><input id="passage-revision" maxlength="500" placeholder="e.g. Make it funnier and add two vocabulary words"><button class="secondary-button" id="revise-passage" type="button">Revise my draft with AI</button><button class="secondary-button" id="use-generated-passage" type="button">Add edited draft as an open-ended question</button><p class="status" id="revision-status" role="status" aria-live="polite"></p></div>
+        <p class="ai-privacy">Passage topics, revision instructions, and draft text are sent to Cloudflare Workers AI using Meta Llama 3.2 1B. Do not include student names or private information. Please review AI-generated material before use.</p>
       </section>
       <form id="quiz-form" class="builder-form">
         <section class="quiz-details" aria-labelledby="quiz-details-heading"><div class="form-section-heading"><span class="form-step">01</span><div><h2 id="quiz-details-heading">Quiz details</h2><p>Give this assessment a clear title students will recognise.</p></div></div><label for="quiz-title">QUIZ TITLE</label><input id="quiz-title" maxlength="80" placeholder="e.g. Reading comprehension: habitats" required></section>
