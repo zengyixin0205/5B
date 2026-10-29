@@ -77,16 +77,21 @@ export default {
         if (!quiz) return json({error:'Quiz code not found.'},404,origin);
         const body = await readJson(request); const studentName = cleanText(body.studentName); const answers = Array.isArray(body.answers) ? body.answers : [];
         if (studentName.length < 1 || studentName.length > 40) return json({error:'Enter a name up to 40 characters.'},400,origin);
-        const questionResult = await env.DB.prepare('SELECT id, question_type, correct_index FROM quiz_questions WHERE quiz_id = ? ORDER BY position').bind(quiz.id).all();
+        const questionResult = await env.DB.prepare('SELECT id, question_type, options_json, correct_index FROM quiz_questions WHERE quiz_id = ? ORDER BY position').bind(quiz.id).all();
         const questions = questionResult.results || [];
-        if (!questions.length || answers.length !== questions.length) return json({error:'Please answer every question.'},400,origin);
+        if (!questions.length || answers.length !== questions.length || new Set(answers.map(item=>String(item.questionId))).size !== questions.length) return json({error:'Please answer every question.'},400,origin);
         const answerMap = new Map(answers.map(item=>[String(item.questionId),cleanText(item.answer)]));
         const saved = []; let score=0; let totalMcq=0;
         for (const question of questions) {
           const answer=answerMap.get(question.id);
           if (answer == null || !answer || answer.length > 2000) return json({error:'Please answer every question. Answers must be 2,000 characters or fewer.'},400,origin);
           let isCorrect=null;
-          if (question.question_type === 'mcq') { totalMcq++; isCorrect=Number(answer)===question.correct_index; if(isCorrect) score++; }
+          if (question.question_type === 'mcq') {
+            totalMcq++;
+            const options=JSON.parse(question.options_json);
+            if (!/^\d+$/.test(answer) || Number(answer) >= options.length) return json({error:'Choose one of the listed answer choices.'},400,origin);
+            isCorrect=Number(answer)===question.correct_index; if(isCorrect) score++;
+          }
           saved.push({questionId:question.id,answer,isCorrect});
         }
         const id=crypto.randomUUID(); const createdAt=new Date().toISOString();
