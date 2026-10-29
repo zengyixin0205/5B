@@ -72,3 +72,27 @@ body{background:#fff8e4;color:#3b2918;font-family:"DM Sans",sans-serif}
 #create-screen .button span{color:#fff}
 #create-screen .created-code{background:#f1f6f2;border:1px solid #cbd9cd;border-radius:5px}
 @media(max-width:600px){#create-screen.teacher-workspace{padding:25px 17px 30px;border-radius:6px}#create-screen .ai-helper{padding:17px}#create-screen .builder-question{padding:16px}}
+
+/* More structured assessment authoring flow */
+#create-screen .teacher-page-heading{padding:3px 0 22px;border-bottom:1px solid #e1e6ec}
+#create-screen .teacher-page-heading .section-tag span{padding:0 5px;color:#a0aab7}
+#create-screen .teacher-page-heading h1{margin:11px 0 8px;font-size:clamp(36px,5vw,48px);letter-spacing:-.04em}
+#create-screen .teacher-page-heading .intro{max-width:650px;color:#657184;font-size:14px;line-height:1.6}
+#create-screen .ai-helper{margin:20px 0 25px}
+#create-screen .builder-form{gap:0;margin-top:0}
+#create-screen .quiz-details,#create-screen .question-section{padding:22px 0;border-bottom:1px solid #e1e6ec}
+#create-screen .form-section-heading{display:flex;align-items:flex-start;gap:13px;margin-bottom:17px}
+#create-screen .form-step{display:grid;place-items:center;flex:0 0 30px;height:30px;border:1px solid #cbd6e2;border-radius:50%;font:600 11px "DM Mono";color:#315b87;background:#f5f8fb}
+#create-screen .form-section-heading h2{margin:1px 0 4px;font:700 17px Manrope,sans-serif;color:#263c57}
+#create-screen .form-section-heading p{margin:0;color:#687587;font-size:12px;line-height:1.5}
+#create-screen .quiz-details>label{display:block;margin:0 0 7px;font:600 11px "DM Sans";letter-spacing:.025em;color:#394b61}
+#create-screen .quiz-details>input{max-width:580px}
+#create-screen .question-section #builder-questions{display:grid;gap:12px}
+#create-screen .question-section .builder-question{margin:0}
+#create-screen #add-question{margin-top:14px}
+#create-screen .publish-row{display:flex;justify-content:space-between;align-items:center;gap:20px;padding-top:22px}
+#create-screen .publish-row p{max-width:390px;margin:0;color:#687587;font-size:12px;line-height:1.5}
+#create-screen .created-code{margin-top:22px;padding:22px 24px}
+#create-screen .created-code span{font:600 10px "DM Mono";letter-spacing:.1em;color:#45644c}
+#create-screen .created-code strong{font:700 36px Manrope;letter-spacing:.16em}
+@media(max-width:600px){#create-screen .quiz-details,#create-screen .question-section{padding:18px 0}#create-screen .publish-row{align-items:stretch;flex-direction:column;gap:13px}#create-screen .publish-row .button{align-self:flex-start}}

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=confusion">
+  <link rel="stylesheet" href="styles.css?v=teacher-workspace-2">
 </head>
 <body>
   <header class="topbar"><a class="brand" href="#" aria-label="The Scraggies, Class 5B"><img class="brand-mark-image" src="assets/scraggy-pokemon.webp" alt=""><span class="brand-name">THE SCRAGGIES<br><small>YOUR TEST, OUR CONFUSION</small></span></a><span class="topbar-label">ENGLISH WITH MRS WRONG · FUN IS RIGHT</span></header>
@@ -33,7 +33,7 @@
     </section>
 
     <section class="screen wide-screen teacher-workspace" id="create-screen" aria-labelledby="create-title">
-      <button class="back-button" data-home type="button">← Back to room</button><div class="section-tag">CLASS 5B · TEACHER WORKSPACE</div><h1 id="create-title">Quiz<br><em>builder</em></h1><p class="intro">Prepare a quiz for your class. Add a reading passage, choose question types, and set the correct answers before publishing.</p>
+      <button class="back-button" data-home type="button">← Back to room</button><div class="teacher-page-heading"><div class="section-tag">CLASS 5B <span aria-hidden="true">/</span> TEACHER WORKSPACE</div><h1 id="create-title">Create a quiz</h1><p class="intro">Prepare and publish an assessment for your class. Add questions, select the response format, and set the answer key.</p></div>
       <section class="ai-helper" aria-labelledby="passage-helper-title">
         <div class="ai-helper-heading"><span class="ai-badge">LLAMA 3.2 · AI ASSISTANT</span><h2 id="passage-helper-title">Reading passage assistant</h2><p>Enter a topic to draft an age-appropriate passage and an open-ended comprehension question. Review and edit the draft before adding it to the quiz.</p></div>
         <form id="passage-form" class="ai-form">
@@ -45,11 +45,11 @@
         <p class="ai-privacy">The topic and optional notes are sent to Cloudflare Workers AI using Meta Llama 3.2 1B. Do not include student names or private information. Please review AI-generated material before use.</p>
       </section>
       <form id="quiz-form" class="builder-form">
-        <label for="quiz-title">QUIZ TITLE</label><input id="quiz-title" maxlength="80" placeholder="e.g. Reading comprehension: habitats" required>
-        <div id="builder-questions"></div><button class="secondary-button" id="add-question" type="button">＋ Add question</button>
-        <button class="button" type="submit">Publish quiz <span>↗</span></button><p class="status" id="create-status" role="status" aria-live="polite"></p>
+        <section class="quiz-details" aria-labelledby="quiz-details-heading"><div class="form-section-heading"><span class="form-step">01</span><div><h2 id="quiz-details-heading">Quiz details</h2><p>Give this assessment a clear title students will recognise.</p></div></div><label for="quiz-title">QUIZ TITLE</label><input id="quiz-title" maxlength="80" placeholder="e.g. Reading comprehension: habitats" required></section>
+        <section class="question-section" aria-labelledby="questions-heading"><div class="form-section-heading"><span class="form-step">02</span><div><h2 id="questions-heading">Questions</h2><p>Add open-ended or multiple-choice questions. For multiple-choice items, select the correct answer.</p></div></div><div id="builder-questions"></div><button class="secondary-button" id="add-question" type="button">＋ Add question</button></section>
+        <div class="publish-row"><p>Publishing saves this quiz and creates a student access code.</p><button class="button" type="submit">Publish quiz <span>↗</span></button></div><p class="status" id="create-status" role="status" aria-live="polite"></p>
       </form>
-      <div class="created-code hidden" id="created-code" role="status"><span>QUIZ CREATED · SIX DIGITS OF PURE MYSTERY</span><strong id="created-code-value"></strong><p>Share this code with the class. Mrs Wrong uses the same code to open the answer vault, so keep it within the class.</p><button class="secondary-button" id="copy-code" type="button">Copy code</button></div>
+      <div class="created-code hidden" id="created-code" role="status"><span>QUIZ PUBLISHED</span><strong id="created-code-value"></strong><p>Share this six-digit code with students so they can open the quiz. Keep the code within the class; it also provides access to the responses.</p><button class="secondary-button" id="copy-code" type="button">Copy quiz code</button></div>
     </section>
 
     <section class="screen wide-screen" id="quiz-screen" aria-labelledby="quiz-heading">
