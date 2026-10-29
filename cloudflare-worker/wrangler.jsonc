@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "5b-english-api",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-29",
+  "account_id": "b720b35f7e06670abf4821c543df704e",
+  "workers_dev": true,
+  "preview_urls": false,
+  "observability": { "enabled": true },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "5b-english-board",
+      "database_id": "286b0c0d-eac3-49ac-b13c-b57de61f6fd6",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "vars": {
+    "SITE_ORIGIN": "https://zengyixin0205.github.io"
+  }
+}

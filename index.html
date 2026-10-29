@@ -50,7 +50,8 @@
     <section class="notices question-section" id="questions">
       <div class="section-tag">02 / CLASS 5B ENGLISH <span>QUESTION BOARD</span></div>
       <div class="notice-heading"><h2>Think it through<span>.</span></h2><p>Choose a question and share your answer.</p></div>
-      <div class="board-notice" role="note"><span aria-hidden="true">ⓘ</span><p><strong>For now, posts are saved in this browser only.</strong> Students on other devices won't see questions or answers yet. A shared class board needs a connected database.</p></div>
+      <div class="board-notice" id="board-notice" role="note"><span aria-hidden="true">ⓘ</span><p><strong>Answers are visible to everyone who visits this public board.</strong> Names are optional; students should use initials and avoid sharing personal information.</p></div>
+      <p class="board-status" id="board-status" role="status" aria-live="polite"></p>
       <div class="question-layout">
         <div id="question-list" class="question-list" aria-live="polite"></div>
         <aside class="teacher-panel">
@@ -62,6 +63,8 @@
             <textarea id="question-title" name="question" rows="4" maxlength="500" placeholder="What would you like the class to think about?" required></textarea>
             <label for="question-topic">Topic <span>OPTIONAL</span></label>
             <input id="question-topic" name="topic" maxlength="50" placeholder="e.g. Reading, vocabulary">
+            <label for="teacher-code">Teacher access code</label>
+            <input id="teacher-code" name="teacherCode" type="password" autocomplete="off" maxlength="200" placeholder="Only the teacher should know this">
             <button class="button form-button" type="submit">Post question <span>↗</span></button>
           </form>
         </aside>
@@ -72,6 +75,7 @@
     <section class="closing"><span class="closing-star">✳</span><p>Read with care.<br>Answer with <em>your own ideas.</em></p><span class="mono">CLASS 5B · ENGLISH</span></section>
   </main>
   <footer><a class="brand" href="#"><span class="brand-mark">5<span>B</span></span></a><span>CLASS 5B · ENGLISH QUESTION BOARD</span><a href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false">BACK TO TOP ↑</a></footer>
+  <script src="cloudflare-config.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
