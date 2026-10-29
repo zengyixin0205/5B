@@ -4,24 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#fbf3df">
-  <meta name="description" content="The Scraggies’ Wordy-Wobble Club: quizzes, clever answers, and English class jokes with Mrs Wrong.">
-  <title>The Scraggies’ Wordy-Wobble Club</title>
+  <meta name="description" content="The Scraggies’ English quizzes with Mrs Wrong. Your test, our confusion!">
+  <title>The Scraggies: Your Test, Our Confusion</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=scraggy">
+  <link rel="stylesheet" href="styles.css?v=confusion">
 </head>
 <body>
-  <header class="topbar"><a class="brand" href="#" aria-label="The Scraggies, Class 5B"><img class="brand-mark-image" src="assets/scraggy-pokemon.webp" alt=""><span class="brand-name">THE SCRAGGIES<br><small>WORDY-WOBBLE CLUB</small></span></a><span class="topbar-label">ENGLISH WITH MRS WRONG · FUN IS RIGHT</span></header>
+  <header class="topbar"><a class="brand" href="#" aria-label="The Scraggies, Class 5B"><img class="brand-mark-image" src="assets/scraggy-pokemon.webp" alt=""><span class="brand-name">THE SCRAGGIES<br><small>YOUR TEST, OUR CONFUSION</small></span></a><span class="topbar-label">ENGLISH WITH MRS WRONG · FUN IS RIGHT</span></header>
   <main class="app-main">
     <section class="screen active" id="name-screen" aria-labelledby="name-title">
-      <div class="section-tag">CLASS 5B · ENGLISH WITH MRS WRONG</div><h1 id="name-title">The Scraggies’<br><em>Wordy-Wobble Club!</em></h1><p class="intro">A classroom where commas dance and words wear silly hats. Enter your name to join a quiz. Your pencil is invited too.</p>
+      <div class="section-tag">CLASS 5B · ENGLISH WITH MRS WRONG</div><h1 id="name-title">Your test,<br><em>our confusion!</em></h1><p class="intro">The Scraggies are ready. Mrs Wrong is mostly ready. Enter your name and let the grammatical chaos begin.</p>
       <div class="welcome-art" aria-label="Scraggy Pokémon">
         <img class="pokemon-feature" src="assets/scraggy-pokemon.webp" alt="Scraggy Pokémon standing with its arms at its sides">
-        <small>SCRAGGY · HEAD OF WOBBLY WORDS</small>
+        <small>SCRAGGY · HEAD OF GRAMMATICAL CHAOS</small>
       </div>
       <form id="name-form" class="stack-form"><label for="student-name">Your name (wizard name also accepted)</label><input id="student-name" maxlength="40" autocomplete="name" placeholder="Type your name, Professor Pickle…" required><button class="button" type="submit">Enter the room <span>↗</span></button></form>
-      <p class="privacy-note">Your name and answers are saved securely and shown only to Mrs Wrong. The pencil jokes are public, though.</p>
+      <p class="privacy-note">Your name and answers are stored so Mrs Wrong can review them. Keep private details out of your answers.</p>
     </section>
 
     <section class="screen" id="home-screen" aria-labelledby="home-title">
@@ -34,13 +34,22 @@
 
     <section class="screen wide-screen" id="create-screen" aria-labelledby="create-title">
       <button class="back-button" data-home type="button">← Back to room</button><div class="section-tag">MRS WRONG’S QUIZ WORKSHOP · LAB COAT OPTIONAL</div><h1 id="create-title">Create a quiz<br><em>for the Scraggies.</em></h1><p class="intro">Add open-ended or multiple-choice questions for Class 5B. The answer key stays undercover, like a very studious spy.</p>
+      <section class="ai-helper" aria-labelledby="passage-helper-title">
+        <div class="ai-helper-heading"><span class="ai-badge">CHATGPT HELPER</span><h2 id="passage-helper-title">Need a passage?</h2><p>Give ChatGPT a topic and it will draft a short reading passage with an open-ended question. You can edit it before it joins the quiz.</p></div>
+        <form id="passage-form" class="ai-form">
+          <label for="passage-topic">Passage topic</label><input id="passage-topic" maxlength="180" placeholder="e.g. A curious Scraggy at the library" required>
+          <label for="passage-notes">Anything to include? <small>Optional</small></label><input id="passage-notes" maxlength="300" placeholder="Vocabulary, theme, or plot idea">
+          <button class="secondary-button" type="submit">Ask ChatGPT to draft it ✨</button><p class="status" id="passage-status" role="status" aria-live="polite"></p>
+        </form>
+        <div class="ai-result hidden" id="passage-result"><label for="generated-passage">Draft passage and question · edit freely</label><textarea id="generated-passage" rows="9"></textarea><button class="secondary-button" id="use-generated-passage" type="button">Add as an open-ended question</button></div>
+        <p class="ai-privacy">ChatGPT receives the topic and optional notes. Don’t put student names or private information here. AI tools need an OpenAI API key configured in Cloudflare.</p>
+      </section>
       <form id="quiz-form" class="builder-form">
         <label for="quiz-title">Quiz title</label><input id="quiz-title" maxlength="80" placeholder="e.g. The Case of the Missing Full Stop" required>
         <div id="builder-questions"></div><button class="secondary-button" id="add-question" type="button">＋ Add another brain-bender</button>
-        <label for="create-teacher-code">Teacher access code (top secret!)</label><input id="create-teacher-code" type="password" autocomplete="off" maxlength="200" placeholder="Not ‘password123’, Mrs Wrong" required>
         <button class="button" type="submit">Make quiz magic <span>↗</span></button><p class="status" id="create-status" role="status" aria-live="polite"></p>
       </form>
-      <div class="created-code hidden" id="created-code" role="status"><span>QUIZ CREATED · SIX DIGITS OF PURE MYSTERY</span><strong id="created-code-value"></strong><p>Share this code with students. Keep the teacher access code in the grown-up zone.</p><button class="secondary-button" id="copy-code" type="button">Copy code</button></div>
+      <div class="created-code hidden" id="created-code" role="status"><span>QUIZ CREATED · SIX DIGITS OF PURE MYSTERY</span><strong id="created-code-value"></strong><p>Share this code with the class. Mrs Wrong uses the same code to open the answer vault, so keep it within the class.</p><button class="secondary-button" id="copy-code" type="button">Copy code</button></div>
     </section>
 
     <section class="screen wide-screen" id="quiz-screen" aria-labelledby="quiz-heading">
@@ -49,13 +58,13 @@
     </section>
 
     <section class="screen wide-screen" id="results-screen" aria-labelledby="results-title">
-      <button class="back-button" data-home type="button">← Back to room</button><div class="section-tag">MRS WRONG’S PRIVATE SCRAGGIE ANSWERS · SHHH!</div><h1 id="results-title">The answer<br><em>vault.</em></h1><p class="intro">Quiz code plus teacher access code unlocks the Scraggies’ answers. No student snooping, you cheeky quiz goblin.</p>
-      <form id="results-form" class="stack-form"><label for="results-quiz-code">Quiz code (six digits of mystery)</label><input id="results-quiz-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required><label for="results-teacher-code">Teacher access code</label><input id="results-teacher-code" type="password" autocomplete="off" placeholder="Grown-up secret password" required><button class="button" type="submit">Open the answer vault <span>↗</span></button></form>
-      <p class="status" id="results-status" role="status" aria-live="polite"></p><div id="results-list"></div><button class="secondary-button hidden" id="export-results" type="button">Download answers as CSV ↓</button>
+      <button class="back-button" data-home type="button">← Back to room</button><div class="section-tag">MRS WRONG’S SCRAGGIE ANSWERS · SHHH!</div><h1 id="results-title">The answer<br><em>vault.</em></h1><p class="intro">Enter the quiz code to see submissions. Anyone with the code can open this vault. Clicking ChatGPT feedback sends that answer and its question to OpenAI, without the student’s name. It suggests; Mrs Wrong decides.</p>
+      <form id="results-form" class="stack-form"><label for="results-quiz-code">Quiz code (six digits of mystery)</label><input id="results-quiz-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required><button class="button" type="submit">Open the answer vault <span>↗</span></button></form>
+      <p class="status" id="results-status" role="status" aria-live="polite"></p><div id="results-list"></div><button class="secondary-button hidden" id="export-results" type="button">Download the answer scroll (CSV) ↓</button>
     </section>
   </main>
-  <footer><a class="brand" href="#"><img class="brand-mark-image footer-mark" src="assets/scraggy-pokemon.webp" alt="Scraggy Pokémon"></a><span>THE SCRAGGIES · MRS WRONG’S ENGLISH CLASS</span><span>WONDER · WRITE · MAYHEM</span></footer>
-  <template id="question-template"><article class="builder-question"><div class="builder-question-head"><b class="question-number"></b><button class="remove-question" type="button" aria-label="Remove question">Remove (bye, question)</button></div><label class="prompt-label">Question</label><textarea class="prompt-input" maxlength="500" rows="3" placeholder="What is the opposite of a vampire?" required></textarea><label>Question type</label><select class="type-input"><option value="open">Open-ended (bring the brain!)</option><option value="mcq">Multiple choice (choose wisely-ish)</option></select><div class="options-area hidden"><label>Answer choices <small>One choice per line, please and thank you</small></label><textarea class="options-input" maxlength="1000" rows="4" placeholder="Choice 1&#10;Choice 2&#10;Choice 3"></textarea><label>Correct answer</label><select class="correct-input"></select></div></article></template>
+  <footer><a class="brand" href="#"><img class="brand-mark-image footer-mark" src="assets/scraggy-pokemon.webp" alt="Scraggy Pokémon"></a><span>THE SCRAGGIES · MRS WRONG’S ENGLISH CLASS</span><span>YOUR TEST · OUR CONFUSION</span></footer>
+  <template id="question-template"><article class="builder-question"><div class="builder-question-head"><b class="question-number"></b><button class="remove-question" type="button" aria-label="Remove question">Remove (bye, question)</button></div><label class="prompt-label">Question or reading passage</label><textarea class="prompt-input" maxlength="4000" rows="5" placeholder="What is the opposite of a vampire? A sleepy carrot?" required></textarea><label>Question type</label><select class="type-input"><option value="open">Open-ended (bring the brain!)</option><option value="mcq">Multiple choice (choose wisely-ish)</option></select><div class="options-area hidden"><label>Answer choices <small>One choice per line, please and thank you</small></label><textarea class="options-input" maxlength="1000" rows="4" placeholder="Choice 1&#10;Choice 2&#10;Choice 3"></textarea><label>Correct answer</label><select class="correct-input"></select></div></article></template>
   <script src="cloudflare-config.js"></script><script src="script.js"></script>
 </body>
 </html>

@@ -49,6 +49,7 @@ function addBuilderQuestion() {
   updateOptions();
   fragment.querySelector('.remove-question').addEventListener('click', () => { article.remove(); renumberQuestions(); });
   builder.append(fragment); renumberQuestions();
+  return article;
 }
 function renumberQuestions() { [...builder.querySelectorAll('.builder-question')].forEach((el, i) => { el.querySelector('.question-number').textContent = 'QUESTION ' + (i + 1); }); }
 document.querySelector('#add-question').addEventListener('click', addBuilderQuestion);
@@ -65,7 +66,7 @@ document.querySelector('#quiz-form').addEventListener('submit', async event => {
   });
   button.disabled = true; status('#create-status', 'Sending your quiz to the cloud… by very reliable internet pigeon.');
   try {
-    const result = await api('/api/quizzes', {method:'POST', headers:{'Content-Type':'application/json','X-Teacher-Code':document.querySelector('#create-teacher-code').value}, body:JSON.stringify({title:document.querySelector('#quiz-title').value.trim(), createdBy:userName, questions})});
+    const result = await api('/api/quizzes', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({title:document.querySelector('#quiz-title').value.trim(), createdBy:userName, questions})});
     document.querySelector('#created-code-value').textContent = result.code;
     document.querySelector('#created-code').classList.remove('hidden');
     status('#create-status', 'Quiz saved! The pigeon has excellent punctuality.');
@@ -74,6 +75,31 @@ document.querySelector('#quiz-form').addEventListener('submit', async event => {
   finally { button.disabled = false; }
 });
 document.querySelector('#copy-code').addEventListener('click', async () => { await navigator.clipboard.writeText(document.querySelector('#created-code-value').textContent); document.querySelector('#copy-code').textContent = 'Copied ✓'; });
+
+let generatedPassage = '';
+document.querySelector('#passage-form').addEventListener('submit', async event => {
+  event.preventDefault();
+  const button=event.currentTarget.querySelector('button[type="submit"]'); button.disabled=true;
+  status('#passage-status','ChatGPT is thinking very hard about punctuation…');
+  try {
+    const result=await api('/api/teacher/assistant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({task:'passage',topic:document.querySelector('#passage-topic').value.trim(),notes:document.querySelector('#passage-notes').value.trim()})});
+    generatedPassage=result.text;
+    document.querySelector('#generated-passage').value=generatedPassage;
+    document.querySelector('#passage-result').classList.remove('hidden');
+    status('#passage-status','Draft ready! Give it a quick teacher check before adding it.');
+  } catch(error) { status('#passage-status',error.message,true); }
+  finally { button.disabled=false; }
+});
+document.querySelector('#use-generated-passage').addEventListener('click',()=>{
+  const text=document.querySelector('#generated-passage').value.trim();
+  if(!text) return;
+  let target=[...builder.querySelectorAll('.builder-question')].reverse().find(item=>item.querySelector('.type-input').value==='open');
+  if(!target) target=addBuilderQuestion();
+  const type=target.querySelector('.type-input'); type.value='open'; type.dispatchEvent(new Event('change'));
+  const prompt=target.querySelector('.prompt-input'); prompt.value=text; prompt.focus();
+  status('#create-status','Passage added as an open-ended question. Edit the draft before you publish!');
+  builder.scrollIntoView({behavior:'smooth',block:'center'});
+});
 
 document.querySelector('#join-form').addEventListener('submit', async event => {
   event.preventDefault(); const code = document.querySelector('#quiz-code').value.trim();
@@ -110,9 +136,9 @@ document.querySelector('#take-quiz-form').addEventListener('submit', async event
 
 document.querySelector('#results-form').addEventListener('submit', async event => {
   event.preventDefault(); const form=event.currentTarget; const button=form.querySelector('button'); button.disabled=true; status('#results-status','Loading answers…');
-  const code=document.querySelector('#results-quiz-code').value.trim(); const teacherCode=document.querySelector('#results-teacher-code').value;
+  const code=document.querySelector('#results-quiz-code').value.trim();
   try {
-    currentResults=await api('/api/quizzes/'+encodeURIComponent(code)+'/submissions',{headers:{'X-Teacher-Code':teacherCode}});
+    currentResults=await api('/api/quizzes/'+encodeURIComponent(code)+'/submissions');
     renderResults(currentResults); status('#results-status',currentResults.submissions.length ? currentResults.submissions.length+' submission'+(currentResults.submissions.length===1?'':'s')+' for “'+currentResults.title+'”. The answer vault is open!' : 'No answers yet. The answer vault is dramatically empty.');
   } catch(error) { status('#results-status',error.message,true); }
   finally { button.disabled=false; }
@@ -122,7 +148,23 @@ function renderResults(data) {
   data.submissions.forEach(submission=>{
     const card=node('article','result-card'); card.append(node('h3','',submission.studentName),node('p','result-date',new Date(submission.createdAt).toLocaleString()));
     if(submission.totalMcq) card.append(node('p','result-score','Multiple-choice: '+submission.score+' / '+submission.totalMcq));
-    submission.answers.forEach(answer=>{ const item=node('div','result-answer'); item.append(node('b','',answer.prompt),node('p','',answer.answer)); if(answer.type==='mcq') item.append(node('small',answer.correct?'answer-correct':'answer-wrong',answer.correct?'Correct':'Correct answer: '+answer.correctAnswer)); card.append(item); }); list.append(card);
+    submission.answers.forEach(answer=>{
+      const item=node('div','result-answer'); item.append(node('b','',answer.prompt),node('p','',answer.answer));
+      if(answer.type==='mcq') item.append(node('small',answer.correct?'answer-correct':'answer-wrong',answer.correct?'Correct':'Correct answer: '+answer.correctAnswer));
+      else {
+        const review=node('button','secondary-button review-answer','Ask ChatGPT for feedback'); review.type='button';
+        const feedback=node('p','ai-feedback hidden'); feedback.setAttribute('aria-live','polite');
+        review.addEventListener('click',async()=>{
+          review.disabled=true; feedback.classList.remove('hidden'); feedback.textContent='ChatGPT is reading carefully. It promises not to mark in red ink…';
+          try { const result=await api('/api/teacher/assistant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({task:'review',question:answer.prompt,answer:answer.answer})}); feedback.textContent=result.text; }
+          catch(error) { feedback.textContent=error.message; }
+          finally { review.disabled=false; }
+        });
+        item.append(review,feedback);
+      }
+      card.append(item);
+    });
+    list.append(card);
   });
   document.querySelector('#export-results').classList.toggle('hidden',data.submissions.length===0);
 }
