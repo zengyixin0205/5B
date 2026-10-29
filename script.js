@@ -35,6 +35,7 @@ function addBuilderQuestion() {
   const article = fragment.querySelector('.builder-question');
   const type = fragment.querySelector('.type-input');
   const optionsArea = fragment.querySelector('.options-area');
+  const guideArea = fragment.querySelector('.open-guide-area');
   const options = fragment.querySelector('.options-input');
   const correct = fragment.querySelector('.correct-input');
   const updateOptions = () => {
@@ -44,7 +45,7 @@ function addBuilderQuestion() {
     lines.forEach((line, index) => { const option = node('option', '', line); option.value = String(index); correct.append(option); });
     if (previous && Number(previous) < lines.length) correct.value = previous;
   };
-  type.addEventListener('change', () => { const on = type.value === 'mcq'; optionsArea.classList.toggle('hidden', !on); options.required = on; correct.required = on; });
+  type.addEventListener('change', () => { const on = type.value === 'mcq'; optionsArea.classList.toggle('hidden', !on); guideArea.classList.toggle('hidden', on); options.required = on; correct.required = on; });
   options.addEventListener('input', updateOptions);
   updateOptions();
   fragment.querySelector('.remove-question').addEventListener('click', () => { article.remove(); renumberQuestions(); });
@@ -62,6 +63,7 @@ document.querySelector('#quiz-form').addEventListener('submit', async event => {
   const questions = [...builder.querySelectorAll('.builder-question')].map(item => {
     const q = {prompt:item.querySelector('.prompt-input').value.trim(), type:item.querySelector('.type-input').value};
     if (q.type === 'mcq') { q.options = item.querySelector('.options-input').value.split('\n').map(x => x.trim()).filter(Boolean); q.correctIndex = Number(item.querySelector('.correct-input').value); }
+    else q.answerGuide = item.querySelector('.answer-guide-input').value.trim();
     return q;
   });
   button.disabled = true; status('#create-status', 'Sending your quiz to the cloud… by very reliable internet pigeon.');
@@ -167,11 +169,12 @@ function renderResults(data) {
       const item=node('div','result-answer'); item.append(node('b','',answer.prompt),node('p','',answer.answer));
       if(answer.type==='mcq') item.append(node('small',answer.correct?'answer-correct':'answer-wrong',answer.correct?'Correct':'Correct answer: '+answer.correctAnswer));
       else {
+        if(answer.answerGuide) item.append(node('b','answer-guide-heading','Teacher answer guide'),node('p','answer-guide-text',answer.answerGuide));
         const review=node('button','secondary-button review-answer','Request AI feedback'); review.type='button';
         const feedback=node('p','ai-feedback hidden'); feedback.setAttribute('aria-live','polite');
         review.addEventListener('click',async()=>{
           review.disabled=true; feedback.classList.remove('hidden'); feedback.textContent='Llama is reviewing this answer…';
-          try { const result=await api('/api/teacher/assistant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({task:'review',question:answer.prompt,answer:answer.answer})}); feedback.textContent=result.text; }
+          try { const result=await api('/api/teacher/assistant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({task:'review',question:answer.prompt,answer:answer.answer,answerGuide:answer.answerGuide||''})}); feedback.textContent=result.text; }
           catch(error) { feedback.textContent=error.message; }
           finally { review.disabled=false; }
         });
@@ -185,7 +188,7 @@ function renderResults(data) {
 }
 document.querySelector('#export-results').addEventListener('click', () => {
   if(!currentResults) return; const rows=[['Quiz','Student','Question','Answer','Correct answer','Submitted']];
-  currentResults.submissions.forEach(s=>s.answers.forEach(a=>rows.push([currentResults.title,s.studentName,a.prompt,a.answer,a.correctAnswer||'',s.createdAt])));
+  currentResults.submissions.forEach(s=>s.answers.forEach(a=>rows.push([currentResults.title,s.studentName,a.prompt,a.answer,a.correctAnswer||a.answerGuide||'',s.createdAt])));
   const csv=rows.map(row=>row.map(x=>'"'+String(x||'').replaceAll('"','""')+'"').join(',')).join('\r\n');
   const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); const link=node('a'); link.href=url; link.download='5b-quiz-answers-'+currentResults.code+'.csv'; link.click(); URL.revokeObjectURL(url);
 });

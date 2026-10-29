@@ -101,3 +101,10 @@ body{background:#fff8e4;color:#3b2918;font-family:"DM Sans",sans-serif}
 #create-screen #passage-revision:focus{border-color:#4778ae;box-shadow:0 0 0 3px #4778ae20;outline:none}
 #create-screen #revise-passage{background:#edf2f7}
 #create-screen #revise-passage:disabled{opacity:.6;cursor:wait}
+#create-screen .open-guide-area{margin-top:14px}
+#create-screen .open-guide-area label{display:block;margin:0 0 7px;font:600 11px "DM Sans";color:#394b61}
+#create-screen .open-guide-area label small{font:400 11px "DM Sans";color:#7b8795;margin-left:5px}
+#create-screen .answer-guide-input{width:100%;padding:12px;border:1px solid #c9d2dd;border-radius:4px;background:#fff;color:#27364a;font:14px/1.55 "DM Sans";resize:vertical}
+#create-screen .answer-guide-input:focus{border-color:#4778ae;box-shadow:0 0 0 3px #4778ae20;outline:none}
+.answer-guide-heading{display:block;margin-top:10px;color:#345779;font:600 11px Manrope}
+.result-answer p.answer-guide-text{margin-top:4px;padding:10px 12px;background:#f1f5f9;border-left:3px solid #7891ad;color:#36485d;font-size:12px}
