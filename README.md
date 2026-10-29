@@ -1,18 +1,17 @@
-# 5B — Our little corner
+# 5B English — Question board
 
-A cheerful, responsive home page for Class 5B.
+A responsive English class question board for Class 5B. The teacher can post a question and optional topic. Students can add an answer and an optional first name or initial. The answer list can be downloaded as a CSV file.
 
-## Preview locally
+## Website
 
-Open `index.html` in a browser. The site is plain HTML, CSS, and JavaScript, so there is no build step.
+The site is published with GitHub Pages from the `main` branch root:
 
-## Publish with GitHub Pages
+https://zengyixin0205.github.io/5B/
 
-The included workflow deploys the site from the `main` branch whenever changes are pushed. In the repository's **Settings → Pages**, set the source to **GitHub Actions** if it is not already selected.
+## Important: where posts are saved
 
-The site is designed to work at the repository's GitHub Pages URL: `https://<username>.github.io/5B/`.
+This repository is a static GitHub Pages site. Questions and answers are currently saved in the browser's local storage. They remain in that browser on that device and are not shared with the teacher or other students. To use this as a real class board across devices, connect a shared database and add appropriate teacher access controls before collecting student responses.
 
-## Make it yours
+## Edit the site
 
-Update the class notes and memory cards in `index.html`, and adjust the colors and layout in `styles.css`.
-
+Open `index.html`, `styles.css`, and `script.js`. No build step is required.
