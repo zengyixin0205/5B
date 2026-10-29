@@ -3,79 +3,56 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f7f6f0">
-  <meta name="description" content="Class 5B's English question board. Read a prompt, think it through, and share your answer.">
-  <title>5B English — Question board</title>
+  <meta name="theme-color" content="#fbf3df">
+  <meta name="description" content="The Scraggies of Class 5B learn English with Mrs Wrong. Join a quiz, share your ideas, and have a go.">
+  <title>The Scraggies — 5B English with Mrs Wrong</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="#" aria-label="5B home"><span class="brand-mark">5<span>B</span></span><span class="brand-name">OUR CLASS<br><small>EST. TOGETHER</small></span></a>
-    <nav aria-label="Main navigation">
-      <a href="#questions">Questions</a><a href="#about">How it works</a>
-    </nav>
-    <a class="nav-cta" href="#questions">Go to today's question <span>↗</span></a>
-  </header>
-  <main>
-    <section class="hero">
-      <div class="hero-copy">
-        <div class="eyebrow"><span class="live-dot"></span> CLASS 5B · ENGLISH</div>
-        <h1>Read it.<br><em>Think it.</em></h1>
-        <p class="intro">A little space for our English class questions. Read the prompt, share what you think, and learn from each other's ideas.</p>
-        <a class="button" href="#questions">See the question <span>↓</span></a>
-        <div class="hero-foot"><span class="scribble">Every answer<br>has a voice <b>✳</b></span><span class="mono">THINK · WRITE<br>SHARE · GROW</span></div>
-      </div>
-      <div class="hero-art" aria-label="Illustration of classmates learning together">
-        <div class="art-note note-one">words open<br>new worlds <span>↗</span></div>
-        <div class="art-note note-two">5B<br>READS & WRITES</div>
-        <div class="sun"></div>
-        <div class="book book-back"></div><div class="book book-front"></div>
-        <div class="plant"><i></i><i></i><i></i><b></b></div>
-        <div class="pencil"></div>
-        <div class="spark s1">✳</div><div class="spark s2">✦</div><div class="spark s3">✳</div>
-        <div class="art-caption">A QUESTION CAN<br>TAKE US ANYWHERE</div>
-      </div>
-      <div class="hero-bottom"><span>SCROLL A LITTLE</span><span>↓</span><span>GOOD THINGS LIVE HERE</span></div>
+  <header class="topbar"><a class="brand" href="#" aria-label="The Scraggies, Class 5B"><span class="brand-mark">5<span>B</span></span><span class="brand-name">THE SCRAGGIES<br><small>ENGLISH WITH MRS WRONG</small></span></a><span class="topbar-label">CURIOUS MINDS · SCRAGGIE IDEAS</span></header>
+  <main class="app-main">
+    <section class="screen active" id="name-screen" aria-labelledby="name-title">
+      <div class="welcome-art" aria-label="The Scraggies of Class 5B"><span>✳</span><b>5B</b><small>THE SCRAGGIES · MRS WRONG’S ENGLISH</small></div>
+      <div class="section-tag">WELCOME TO THE SCRAGGIES’ ENGLISH CORNER</div><h1 id="name-title">Scraggies,<br><em>assemble!</em></h1><p class="intro">Welcome to 5B’s English corner with Mrs Wrong. Enter your name to join a quiz and share your best ideas.</p>
+      <form id="name-form" class="stack-form"><label for="student-name">Scraggie name</label><input id="student-name" maxlength="40" autocomplete="name" placeholder="What should we call you?" required><button class="button" type="submit">Enter the room <span>↗</span></button></form>
+      <p class="privacy-note">Your name and answers are saved securely and shown only to Mrs Wrong.</p>
     </section>
 
-    <section class="welcome" id="about">
-      <div class="section-tag">01 / HOW OUR QUESTION BOARD WORKS</div>
-      <div class="welcome-body"><h2>Good thinking<br><span>starts with a question.</span></h2><div><p>Our English teacher can add a prompt for the class. Students can write their own responses and see them listed underneath the question.</p><a class="text-link" href="#questions">Go answer a question <span>↗</span></a></div></div>
-      <div class="values"><div><span>01</span><b>Read carefully</b><small>Look for what the question asks.</small></div><div><span>02</span><b>Share your thinking</b><small>Use your own words and ideas.</small></div><div><span>03</span><b>Be respectful</b><small>We can have different answers.</small></div></div>
+    <section class="screen" id="home-screen" aria-labelledby="home-title">
+      <div class="section-tag">THE SCRAGGIES’ ENGLISH CORNER · WITH MRS WRONG</div><h1 id="home-title">Welcome,<br><em id="welcome-name"></em></h1><p class="intro">Ready for a Scraggie-sized challenge? Pick a quiz or make one for the class.</p>
+      <div class="choice-grid"><button class="choice-card" id="open-create" type="button"><span class="choice-icon">✎</span><b>Make a Scraggie quiz</b><small>For Mrs Wrong and the class</small><span class="choice-arrow">↗</span></button><button class="choice-card" id="open-join" type="button"><span class="choice-icon">⌁</span><b>Join a Scraggie quiz</b><small>Enter a code from Mrs Wrong</small><span class="choice-arrow">↗</span></button></div>
+      <form id="join-form" class="stack-form hidden"><label for="quiz-code">Quiz code</label><input id="quiz-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="6-digit code" required><button class="button" type="submit">Open quiz <span>↗</span></button></form>
+      <button class="text-button" id="open-results" type="button">Mrs Wrong: view answers</button><button class="text-button" id="change-name" type="button">Change name</button>
+      <p class="status" id="home-status" role="status" aria-live="polite"></p>
     </section>
 
-    <section class="notices question-section" id="questions">
-      <div class="section-tag">02 / CLASS 5B ENGLISH <span>QUESTION BOARD</span></div>
-      <div class="notice-heading"><h2>Think it through<span>.</span></h2><p>Choose a question and share your answer.</p></div>
-      <div class="board-notice" id="board-notice" role="note"><span aria-hidden="true">ⓘ</span><p><strong>Answers are visible to everyone who visits this public board.</strong> Names are optional; students should use initials and avoid sharing personal information.</p></div>
-      <p class="board-status" id="board-status" role="status" aria-live="polite"></p>
-      <div class="question-layout">
-        <div id="question-list" class="question-list" aria-live="polite"></div>
-        <aside class="teacher-panel">
-          <span class="panel-kicker">FOR THE TEACHER</span>
-          <h3>Post a question</h3>
-          <p>Add a prompt for students to answer.</p>
-          <form id="question-form">
-            <label for="question-title">Question</label>
-            <textarea id="question-title" name="question" rows="4" maxlength="500" placeholder="What would you like the class to think about?" required></textarea>
-            <label for="question-topic">Topic <span>OPTIONAL</span></label>
-            <input id="question-topic" name="topic" maxlength="50" placeholder="e.g. Reading, vocabulary">
-            <label for="teacher-code">Teacher access code</label>
-            <input id="teacher-code" name="teacherCode" type="password" autocomplete="off" maxlength="200" placeholder="Only the teacher should know this">
-            <button class="button form-button" type="submit">Post question <span>↗</span></button>
-          </form>
-        </aside>
-      </div>
-      <div class="answer-export-row"><p>Student names are optional. First names or initials are best.</p><button class="text-button" id="export-answers" type="button">Download answers as CSV ↓</button></div>
+    <section class="screen wide-screen" id="create-screen" aria-labelledby="create-title">
+      <button class="back-button" data-home type="button">← Back to room</button><div class="section-tag">MRS WRONG’S QUIZ WORKSHOP</div><h1 id="create-title">Create a quiz<br><em>for the Scraggies.</em></h1><p class="intro">Add open-ended or multiple-choice questions for Class 5B. Your quiz and answer key are saved securely.</p>
+      <form id="quiz-form" class="builder-form">
+        <label for="quiz-title">Quiz title</label><input id="quiz-title" maxlength="80" placeholder="e.g. The Scraggies’ reading challenge" required>
+        <div id="builder-questions"></div><button class="secondary-button" id="add-question" type="button">＋ Add a question</button>
+        <label for="create-teacher-code">Teacher access code</label><input id="create-teacher-code" type="password" autocomplete="off" maxlength="200" placeholder="Teacher only" required>
+        <button class="button" type="submit">Create quiz <span>↗</span></button><p class="status" id="create-status" role="status" aria-live="polite"></p>
+      </form>
+      <div class="created-code hidden" id="created-code" role="status"><span>QUIZ CREATED · SHARE THIS CODE WITH STUDENTS</span><strong id="created-code-value"></strong><p>Students enter this code on the welcome page to take the quiz.</p><button class="secondary-button" id="copy-code" type="button">Copy code</button></div>
     </section>
 
-    <section class="closing"><span class="closing-star">✳</span><p>Read with care.<br>Answer with <em>your own ideas.</em></p><span class="mono">CLASS 5B · ENGLISH</span></section>
+    <section class="screen wide-screen" id="quiz-screen" aria-labelledby="quiz-heading">
+      <button class="back-button" data-home type="button">← Back to room</button><div class="section-tag">CLASS 5B · ENGLISH QUIZ</div><h1 id="quiz-heading"></h1><p class="intro" id="quiz-student"></p>
+      <form id="take-quiz-form" class="builder-form"><div id="quiz-questions"></div><button class="button" type="submit">Submit answers <span>↗</span></button><p class="status" id="quiz-status" role="status" aria-live="polite"></p></form>
+    </section>
+
+    <section class="screen wide-screen" id="results-screen" aria-labelledby="results-title">
+      <button class="back-button" data-home type="button">← Back to room</button><div class="section-tag">MRS WRONG’S PRIVATE SCRAGGIE ANSWERS</div><h1 id="results-title">Quiz <em>answers.</em></h1><p class="intro">Mrs Wrong can enter the quiz and teacher codes to see the Scraggies’ submissions.</p>
+      <form id="results-form" class="stack-form"><label for="results-quiz-code">Quiz code</label><input id="results-quiz-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required><label for="results-teacher-code">Teacher access code</label><input id="results-teacher-code" type="password" autocomplete="off" required><button class="button" type="submit">View answers <span>↗</span></button></form>
+      <p class="status" id="results-status" role="status" aria-live="polite"></p><div id="results-list"></div><button class="secondary-button hidden" id="export-results" type="button">Download answers as CSV ↓</button>
+    </section>
   </main>
-  <footer><a class="brand" href="#"><span class="brand-mark">5<span>B</span></span></a><span>CLASS 5B · ENGLISH QUESTION BOARD</span><a href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false">BACK TO TOP ↑</a></footer>
-  <script src="cloudflare-config.js"></script>
-  <script src="script.js"></script>
+  <footer><a class="brand" href="#"><span class="brand-mark">5<span>B</span></span></a><span>THE SCRAGGIES · MRS WRONG’S ENGLISH CLASS</span><span>WONDER · WRITE · GROW</span></footer>
+  <template id="question-template"><article class="builder-question"><div class="builder-question-head"><b class="question-number"></b><button class="remove-question" type="button" aria-label="Remove question">Remove</button></div><label class="prompt-label">Question</label><textarea class="prompt-input" maxlength="500" rows="3" placeholder="Write your question…" required></textarea><label>Question type</label><select class="type-input"><option value="open">Open-ended</option><option value="mcq">Multiple choice</option></select><div class="options-area hidden"><label>Answer choices <small>One choice per line</small></label><textarea class="options-input" maxlength="1000" rows="4" placeholder="Choice 1&#10;Choice 2&#10;Choice 3"></textarea><label>Correct answer</label><select class="correct-input"></select></div></article></template>
+  <script src="cloudflare-config.js"></script><script src="script.js"></script>
 </body>
 </html>

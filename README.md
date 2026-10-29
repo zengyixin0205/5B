@@ -1,33 +1,31 @@
-# 5B English — Question board
+# 5B English Quiz Room
 
-A responsive English class board for Class 5B. Teachers can post questions with an optional topic. Students can answer with an optional name or initials. Answers can be downloaded as CSV.
+A name-first English quiz website for Class 5B. The teacher can create quizzes with open-ended and multiple-choice questions. Each quiz is saved in Cloudflare D1 and gets a six-digit code. Students enter their name and the code to answer. Only someone with the teacher access code can view submissions and answer keys.
 
 ## Website and API
 
 - Website: https://zengyixin0205.github.io/5B/
 - Cloudflare Worker API: https://5b-english-api.zeng-yixin.workers.dev
-- Cloudflare D1 database: 5b-english-board
+- Cloudflare D1 database: `5b-english-board`
 
-The website is hosted on GitHub Pages. The API runs on a Cloudflare Worker and stores shared questions and answers in Cloudflare D1.
+GitHub Pages hosts the website. Cloudflare Workers handles quiz creation, scoring, and submissions; Cloudflare D1 stores quiz content and answers.
 
-## Teacher posting
+## Teacher access
 
-Enter the teacher access code in the question form each time a prompt is posted. The code is stored as a Cloudflare Worker secret, not in this repository or the browser. Do not share it with students. To replace it, run:
+The teacher access code is a Cloudflare Worker secret and is never included in this repository. Enter it when creating a quiz or viewing submissions. Replace it with:
 
     npm exec --yes --package=wrangler@4.155.0 -- wrangler secret put TEACHER_CODE --config cloudflare-worker/wrangler.jsonc
 
-## Board visibility
+Quiz codes can be shared with students. Do not share the teacher access code with students.
 
-This board is public: every question and answer is visible to anyone who visits the website. Student names are optional. Students should use initials or no name and avoid personal information.
+## Deploy
 
-## Deploy changes
-
-The front end deploys when changes are pushed to the main branch. Deploy Worker changes with:
+The website deploys from the `main` branch through GitHub Pages. Deploy Worker changes with:
 
     npm exec --yes --package=wrangler@4.155.0 -- wrangler deploy --config cloudflare-worker/wrangler.jsonc
 
-The D1 schema migration is in cloudflare-worker/migrations/0001_initial.sql. For future migrations, use Wrangler's D1 migration commands with the remote database.
+Apply new D1 schema migrations to the remote database with:
 
-## Local preview
+    npm exec --yes --package=wrangler@4.155.0 -- wrangler d1 migrations apply 5b-english-board --remote --config cloudflare-worker/wrangler.jsonc
 
-Open index.html in a browser. The cloudflare-config.js file points to the live API; set CLOUDFLARE_API_BASE to an empty string to use browser-only preview data.
+The Worker secret `TEACHER_CODE` must remain configured in Cloudflare. The Worker limits browser access to the GitHub Pages origin configured as `SITE_ORIGIN`.

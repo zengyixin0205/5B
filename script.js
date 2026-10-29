@@ -1,168 +1,134 @@
-const STORAGE_KEY = '5b-english-board-v1';
 const API_BASE = String(window.CLOUDFLARE_API_BASE || '').replace(/\/$/, '');
-const board = document.querySelector('#question-list');
-const questionForm = document.querySelector('#question-form');
-const boardStatus = document.querySelector('#board-status');
-let questions = [];
+const nameForm = document.querySelector('#name-form');
+const nameInput = document.querySelector('#student-name');
+const screens = [...document.querySelectorAll('.screen')];
+let userName = sessionStorage.getItem('5b-name') || '';
+let currentQuiz = null;
+let currentResults = null;
 
-function readLocalQuestions() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    return Array.isArray(saved) ? saved : [];
-  } catch {
-    return [];
-  }
+function show(id) { screens.forEach(el => el.classList.toggle('active', el.id === id)); window.scrollTo({top:0, behavior:'smooth'}); }
+function status(id, message, error) { const el = document.querySelector(id); el.textContent = message || ''; el.classList.toggle('is-error', Boolean(error)); }
+function node(tag, className, value) { const el = document.createElement(tag); if (className) el.className = className; if (value !== undefined) el.textContent = value; return el; }
+async function api(path, options) {
+  if (!API_BASE) throw new Error('Cloud storage is not connected yet.');
+  const response = await fetch(API_BASE + path, options || {});
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || 'Could not complete that request.');
+  return data;
 }
-function saveLocalQuestions() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(questions));
+function enterRoom(name) {
+  userName = name.trim(); sessionStorage.setItem('5b-name', userName);
+  document.querySelector('#welcome-name').textContent = userName;
+  show('home-screen');
 }
-function make(tag, className, text) {
-  const node = document.createElement(tag);
-  if (className) node.className = className;
-  if (text !== undefined) node.textContent = text;
-  return node;
-}
-function status(message, error = false) {
-  boardStatus.textContent = message;
-  boardStatus.classList.toggle('is-error', error);
-}
-async function api(path, options = {}) {
-  const response = await fetch(API_BASE + path, options);
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(payload.error || 'The class board could not complete that request.');
-  return payload;
-}
-function render() {
-  board.replaceChildren();
-  if (!questions.length) {
-    const empty = make('div', 'empty-board');
-    empty.append(make('span', 'empty-icon', '✎'));
-    empty.append(make('h3', '', 'No questions yet'));
-    empty.append(make('p', '', 'The teacher can add the first English question using the form. It will appear here, ready for everyone to answer.'));
-    board.append(empty);
-    return;
-  }
-  [...questions].reverse().forEach(question => {
-    const card = make('article', 'question-card');
-    const head = make('div', 'question-card-head');
-    head.append(make('span', 'question-topic', question.topic || 'ENGLISH QUESTION'));
-    const headRight = make('div', 'question-card-head');
-    headRight.append(make('span', 'question-date', new Date(question.createdAt).toLocaleDateString(undefined, {year:'numeric',month:'short',day:'numeric'})));
-    if (!API_BASE) {
-      const remove = make('button', 'delete-question', 'Remove');
-      remove.type = 'button';
-      remove.setAttribute('aria-label', 'Remove this question from this browser');
-      remove.addEventListener('click', () => {
-        questions = questions.filter(item => item.id !== question.id);
-        saveLocalQuestions(); render();
-      });
-      headRight.append(remove);
-    }
-    head.append(headRight);
-    card.append(head, make('h3', '', question.text));
+nameForm.addEventListener('submit', event => { event.preventDefault(); if (nameInput.value.trim()) enterRoom(nameInput.value); });
+if (userName) enterRoom(userName);
+document.querySelector('#change-name').addEventListener('click', () => { show('name-screen'); nameInput.value = userName; nameInput.focus(); });
+document.querySelector('#open-create').addEventListener('click', () => { show('create-screen'); });
+document.querySelector('#open-join').addEventListener('click', () => { const form = document.querySelector('#join-form'); form.classList.toggle('hidden'); if (!form.classList.contains('hidden')) document.querySelector('#quiz-code').focus(); });
+document.querySelector('#open-results').addEventListener('click', () => show('results-screen'));
+document.querySelectorAll('[data-home]').forEach(button => button.addEventListener('click', () => show('home-screen')));
 
-    const form = make('form', 'answer-form');
-    const nameWrap = make('div');
-    const nameLabel = make('label', '', 'NAME OR INITIALS · OPTIONAL');
-    const name = make('input'); name.type = 'text'; name.maxLength = 40; name.autocomplete = 'nickname'; name.placeholder = 'e.g. Sam or S.';
-    nameLabel.htmlFor = 'name-' + question.id; name.id = 'name-' + question.id; nameWrap.append(nameLabel, name);
-    const answerWrap = make('div', 'answer-text-wrap');
-    const answerLabel = make('label', '', 'YOUR ANSWER');
-    const answer = make('textarea'); answer.rows = 3; answer.maxLength = 2000; answer.required = true; answer.placeholder = 'Share your thinking in your own words…';
-    answerLabel.htmlFor = 'answer-' + question.id; answer.id = 'answer-' + question.id; answerWrap.append(answerLabel, answer);
-    const submit = make('button', 'button', 'Send answer ↗'); submit.type = 'submit';
-    form.append(nameWrap, answerWrap, submit);
-    form.addEventListener('submit', async event => {
-      event.preventDefault();
-      const responseText = answer.value.trim();
-      if (!responseText) return;
-      submit.disabled = true;
-      try {
-        if (API_BASE) {
-          await api('/api/questions/' + encodeURIComponent(question.id) + '/answers', {
-            method: 'POST', headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({name: name.value.trim(), answer: responseText})
-          });
-          await loadRemoteQuestions();
-          status('Your answer was added to the class board.');
-        } else {
-          question.answers.push({name: name.value.trim() || 'Student', text: responseText, createdAt: new Date().toISOString()});
-          saveLocalQuestions(); render();
-          status('Answer saved in this browser. It is not shared with the class yet.');
-        }
-      } catch {
-        status('Could not save your answer. Please try again.', true);
-      } finally {
-        submit.disabled = false;
-      }
-    });
-    card.append(form);
-    const answers = make('div', 'answer-list');
-    (question.answers || []).forEach(response => {
-      const item = make('div', 'answer-item');
-      item.append(make('strong', '', response.name || 'Student'));
-      item.append(make('p', '', response.text));
-      answers.append(item);
-    });
-    if ((question.answers || []).length) {
-      card.append(answers, make('p', 'answer-count', question.answers.length + ' ' + (question.answers.length === 1 ? 'answer' : 'answers') + ' on the class board'));
-    }
-    board.append(card);
-  });
+const builder = document.querySelector('#builder-questions');
+function addBuilderQuestion() {
+  const fragment = document.querySelector('#question-template').content.cloneNode(true);
+  const article = fragment.querySelector('.builder-question');
+  const type = fragment.querySelector('.type-input');
+  const optionsArea = fragment.querySelector('.options-area');
+  const options = fragment.querySelector('.options-input');
+  const correct = fragment.querySelector('.correct-input');
+  const updateOptions = () => {
+    const lines = options.value.split('\n').map(x => x.trim()).filter(Boolean);
+    const previous = correct.value;
+    correct.replaceChildren();
+    lines.forEach((line, index) => { const option = node('option', '', line); option.value = String(index); correct.append(option); });
+    if (previous && Number(previous) < lines.length) correct.value = previous;
+  };
+  type.addEventListener('change', () => { const on = type.value === 'mcq'; optionsArea.classList.toggle('hidden', !on); options.required = on; correct.required = on; });
+  options.addEventListener('input', updateOptions);
+  updateOptions();
+  fragment.querySelector('.remove-question').addEventListener('click', () => { article.remove(); renumberQuestions(); });
+  builder.append(fragment); renumberQuestions();
 }
-async function loadRemoteQuestions() {
-  const result = await api('/api/questions', {headers: {'Accept':'application/json'}});
-  questions = Array.isArray(result.questions) ? result.questions : [];
-  render();
-}
-questionForm.addEventListener('submit', async event => {
+function renumberQuestions() { [...builder.querySelectorAll('.builder-question')].forEach((el, i) => { el.querySelector('.question-number').textContent = 'QUESTION ' + (i + 1); }); }
+document.querySelector('#add-question').addEventListener('click', addBuilderQuestion);
+addBuilderQuestion();
+
+document.querySelector('#quiz-form').addEventListener('submit', async event => {
   event.preventDefault();
-  const data = new FormData(questionForm);
-  const text = String(data.get('question') || '').trim();
-  if (!text) return;
-  const button = questionForm.querySelector('button[type="submit"]');
-  button.disabled = true;
-  try {
-    if (API_BASE) {
-      const teacherCode = String(data.get('teacherCode') || '');
-      if (!teacherCode) throw new Error('Enter the teacher access code to post a question.');
-      await api('/api/questions', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json', 'X-Teacher-Code': teacherCode},
-        body: JSON.stringify({question:text, topic:String(data.get('topic') || '').trim()})
-      });
-      await loadRemoteQuestions();
-      status('Question posted. Students can now share their answers.');
-    } else {
-      questions.push({id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()), text, topic: String(data.get('topic') || '').trim(), createdAt: new Date().toISOString(), answers: []});
-      saveLocalQuestions(); render();
-      status('Question saved in this browser. Connect the Cloudflare API to share it with students.');
-    }
-    questionForm.reset();
-  } catch (error) {
-    status(error.message || 'Could not post the question. Please try again.', true);
-  } finally {
-    button.disabled = false;
-  }
-});
-
-document.querySelector('#export-answers').addEventListener('click', () => {
-  const rows = [['Question', 'Topic', 'Student', 'Answer', 'Submitted']];
-  questions.forEach(question => (question.answers || []).forEach(answer => rows.push([question.text, question.topic, answer.name, answer.text, answer.createdAt])));
-  if (rows.length === 1) { alert('There are no answers to download yet.'); return; }
-  const csv = rows.map(row => row.map(value => '"' + String(value).replaceAll('"', '""') + '"').join(',')).join('\r\n');
-  const url = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
-  const link = make('a'); link.href = url; link.download = '5b-english-answers.csv'; link.click(); URL.revokeObjectURL(url);
-});
-
-if (API_BASE) {
-  document.querySelector('#teacher-code').required = true;
-  status('Loading the shared class board…');
-  loadRemoteQuestions().then(() => status('Questions and answers are shared on this class board.')).catch(() => {
-    status('The shared board could not be reached. Please try again later.', true);
+  const form = event.currentTarget;
+  const button = form.querySelector('button[type="submit"]');
+  const questions = [...builder.querySelectorAll('.builder-question')].map(item => {
+    const q = {prompt:item.querySelector('.prompt-input').value.trim(), type:item.querySelector('.type-input').value};
+    if (q.type === 'mcq') { q.options = item.querySelector('.options-input').value.split('\n').map(x => x.trim()).filter(Boolean); q.correctIndex = Number(item.querySelector('.correct-input').value); }
+    return q;
   });
-} else {
-  questions = readLocalQuestions();
-  render();
-  status('Preview mode: changes are saved only in this browser.');
+  button.disabled = true; status('#create-status', 'Saving your quiz…');
+  try {
+    const result = await api('/api/quizzes', {method:'POST', headers:{'Content-Type':'application/json','X-Teacher-Code':document.querySelector('#create-teacher-code').value}, body:JSON.stringify({title:document.querySelector('#quiz-title').value.trim(), createdBy:userName, questions})});
+    document.querySelector('#created-code-value').textContent = result.code;
+    document.querySelector('#created-code').classList.remove('hidden');
+    status('#create-status', 'Quiz saved.');
+    document.querySelector('#created-code').scrollIntoView({behavior:'smooth',block:'center'});
+  } catch (error) { status('#create-status', error.message, true); }
+  finally { button.disabled = false; }
+});
+document.querySelector('#copy-code').addEventListener('click', async () => { await navigator.clipboard.writeText(document.querySelector('#created-code-value').textContent); document.querySelector('#copy-code').textContent = 'Copied ✓'; });
+
+document.querySelector('#join-form').addEventListener('submit', async event => {
+  event.preventDefault(); const code = document.querySelector('#quiz-code').value.trim();
+  status('#home-status', 'Opening quiz…');
+  try { await openQuiz(code); status('#home-status', ''); }
+  catch (error) { status('#home-status', error.message, true); }
+});
+async function openQuiz(code) {
+  const result = await api('/api/quizzes/' + encodeURIComponent(code));
+  currentQuiz = result;
+  document.querySelector('#quiz-heading').textContent = result.title;
+  document.querySelector('#quiz-student').textContent = 'For ' + userName + ' · Code ' + result.code;
+  const container = document.querySelector('#quiz-questions'); container.replaceChildren();
+  result.questions.forEach((question, index) => {
+    const block = node('article', 'take-question'); block.append(node('span','question-number','QUESTION ' + (index + 1)), node('h3','',question.prompt));
+    if (question.type === 'mcq') {
+      question.options.forEach((option, optionIndex) => {
+        const label = node('label','radio-option'); const input = node('input'); input.type='radio'; input.name='answer-' + question.id; input.value=String(optionIndex); input.required=true; label.append(input,node('span','',option)); block.append(label);
+      });
+    } else { const answer = node('textarea','student-answer'); answer.name='answer-' + question.id; answer.maxLength=2000; answer.rows=4; answer.placeholder='Write your answer…'; answer.required=true; block.append(answer); }
+    container.append(block);
+  });
+  status('#quiz-status',''); show('quiz-screen');
 }
+document.querySelector('#take-quiz-form').addEventListener('submit', async event => {
+  event.preventDefault(); const button = event.currentTarget.querySelector('button[type="submit"]'); button.disabled=true;
+  const answers = currentQuiz.questions.map(q => { const field = event.currentTarget.elements['answer-' + q.id]; return {questionId:q.id, answer:field.type === 'radio' ? field.value : field.value.trim()}; });
+  try {
+    const result = await api('/api/quizzes/' + encodeURIComponent(currentQuiz.code) + '/submissions', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({studentName:userName,answers})});
+    status('#quiz-status', result.totalMcq ? 'Your answers are saved. Multiple-choice score: ' + result.score + ' / ' + result.totalMcq + '.' : 'Your answers are saved. Your teacher can now read them.');
+    button.textContent='Submitted ✓';
+  } catch (error) { status('#quiz-status',error.message,true); button.disabled=false; }
+});
+
+document.querySelector('#results-form').addEventListener('submit', async event => {
+  event.preventDefault(); const form=event.currentTarget; const button=form.querySelector('button'); button.disabled=true; status('#results-status','Loading answers…');
+  const code=document.querySelector('#results-quiz-code').value.trim(); const teacherCode=document.querySelector('#results-teacher-code').value;
+  try {
+    currentResults=await api('/api/quizzes/'+encodeURIComponent(code)+'/submissions',{headers:{'X-Teacher-Code':teacherCode}});
+    renderResults(currentResults); status('#results-status',currentResults.submissions.length+' submission'+(currentResults.submissions.length===1?'':'s')+' for “'+currentResults.title+'”.');
+  } catch(error) { status('#results-status',error.message,true); }
+  finally { button.disabled=false; }
+});
+function renderResults(data) {
+  const list=document.querySelector('#results-list'); list.replaceChildren();
+  data.submissions.forEach(submission=>{
+    const card=node('article','result-card'); card.append(node('h3','',submission.studentName),node('p','result-date',new Date(submission.createdAt).toLocaleString()));
+    if(submission.totalMcq) card.append(node('p','result-score','Multiple-choice: '+submission.score+' / '+submission.totalMcq));
+    submission.answers.forEach(answer=>{ const item=node('div','result-answer'); item.append(node('b','',answer.prompt),node('p','',answer.answer)); if(answer.type==='mcq') item.append(node('small',answer.correct?'answer-correct':'answer-wrong',answer.correct?'Correct':'Correct answer: '+answer.correctAnswer)); card.append(item); }); list.append(card);
+  });
+  document.querySelector('#export-results').classList.toggle('hidden',data.submissions.length===0);
+}
+document.querySelector('#export-results').addEventListener('click', () => {
+  if(!currentResults) return; const rows=[['Quiz','Student','Question','Answer','Correct answer','Submitted']];
+  currentResults.submissions.forEach(s=>s.answers.forEach(a=>rows.push([currentResults.title,s.studentName,a.prompt,a.answer,a.correctAnswer||'',s.createdAt])));
+  const csv=rows.map(row=>row.map(x=>'"'+String(x||'').replaceAll('"','""')+'"').join(',')).join('\r\n');
+  const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); const link=node('a'); link.href=url; link.download='5b-quiz-answers-'+currentResults.code+'.csv'; link.click(); URL.revokeObjectURL(url);
+});
