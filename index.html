@@ -12,16 +12,13 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="topbar"><a class="brand" href="#" aria-label="The Scraggies, Class 5B"><span class="brand-mark">5<span>B</span></span><span class="brand-name">THE SCRAGGIES<br><small>CLASS 5B</small></span></a><span class="topbar-label">ENGLISH WITH MRS WRONG</span></header>
+  <header class="topbar"><a class="brand" href="#" aria-label="The Scraggies, Class 5B"><img class="brand-mark-image" src="assets/scraggy-pokemon.webp" alt=""><span class="brand-name">THE SCRAGGIES<br><small>CLASS 5B</small></span></a><span class="topbar-label">ENGLISH WITH MRS WRONG</span></header>
   <main class="app-main">
     <section class="screen active" id="name-screen" aria-labelledby="name-title">
       <div class="section-tag">CLASS 5B · ENGLISH WITH MRS WRONG</div><h1 id="name-title">Welcome to<br><em>the Scraggies!</em></h1><p class="intro">Step into our English room. Add your name to join a quiz with Mrs Wrong and the rest of 5B.</p>
-      <div class="welcome-art" aria-label="Meet the Scraggies, the Class 5B English crew">
-        <div class="scraggie-crew" aria-hidden="true"><svg viewBox="0 0 300 150" role="presentation">
-          <g class="scrag scrag-one"><path d="M36 117c-22-9-28-34-18-54l-7-17 19 7C42 39 58 34 74 41l17-12 2 23c15 18 11 48-7 62-13 10-35 12-50 3Z" fill="#e88c66"/><ellipse cx="48" cy="78" rx="4" ry="6" fill="#302b25"/><ellipse cx="72" cy="78" rx="4" ry="6" fill="#302b25"/><path d="M49 94q12 12 24 0" fill="none" stroke="#302b25" stroke-width="3" stroke-linecap="round"/></g>
-          <g class="scrag scrag-two"><path d="M110 117c-19-10-23-36-11-54l-4-20 17 10c14-11 33-12 48-3l16-10-2 22c13 18 7 46-11 58-15 10-37 8-53-3Z" fill="#f1c94c"/><ellipse cx="126" cy="78" rx="4" ry="6" fill="#302b25"/><ellipse cx="150" cy="78" rx="4" ry="6" fill="#302b25"/><path d="M127 94q12 12 24 0" fill="none" stroke="#302b25" stroke-width="3" stroke-linecap="round"/></g>
-          <g class="scrag scrag-three"><path d="M188 118c-22-8-29-33-19-53l-6-19 19 7c13-14 32-18 49-10l15-13 3 23c15 17 11 46-7 61-14 12-37 15-54 4Z" fill="#88ae7f"/><ellipse cx="201" cy="79" rx="4" ry="6" fill="#302b25"/><ellipse cx="225" cy="79" rx="4" ry="6" fill="#302b25"/><path d="M202 95q12 12 24 0" fill="none" stroke="#302b25" stroke-width="3" stroke-linecap="round"/></g>
-        </svg></div><small>THE SCRAGGIES · 5B</small>
+      <div class="welcome-art" aria-label="Scraggy Pokémon">
+        <img class="pokemon-feature" src="assets/scraggy-pokemon.webp" alt="Scraggy Pokémon standing with its arms at its sides">
+        <small>SCRAGGY · THE SCRAGGIES’ CLASS MASCOT</small>
       </div>
       <form id="name-form" class="stack-form"><label for="student-name">Scraggie name</label><input id="student-name" maxlength="40" autocomplete="name" placeholder="What should we call you?" required><button class="button" type="submit">Enter the room <span>↗</span></button></form>
       <p class="privacy-note">Your name and answers are saved securely and shown only to Mrs Wrong.</p>
@@ -57,7 +54,7 @@
       <p class="status" id="results-status" role="status" aria-live="polite"></p><div id="results-list"></div><button class="secondary-button hidden" id="export-results" type="button">Download answers as CSV ↓</button>
     </section>
   </main>
-  <footer><a class="brand" href="#"><span class="brand-mark">5<span>B</span></span></a><span>THE SCRAGGIES · MRS WRONG’S ENGLISH CLASS</span><span>WONDER · WRITE · GROW</span></footer>
+  <footer><a class="brand" href="#"><img class="brand-mark-image footer-mark" src="assets/scraggy-pokemon.webp" alt="Scraggy Pokémon"></a><span>THE SCRAGGIES · MRS WRONG’S ENGLISH CLASS</span><span>WONDER · WRITE · GROW</span></footer>
   <template id="question-template"><article class="builder-question"><div class="builder-question-head"><b class="question-number"></b><button class="remove-question" type="button" aria-label="Remove question">Remove</button></div><label class="prompt-label">Question</label><textarea class="prompt-input" maxlength="500" rows="3" placeholder="Write your question…" required></textarea><label>Question type</label><select class="type-input"><option value="open">Open-ended</option><option value="mcq">Multiple choice</option></select><div class="options-area hidden"><label>Answer choices <small>One choice per line</small></label><textarea class="options-input" maxlength="1000" rows="4" placeholder="Choice 1&#10;Choice 2&#10;Choice 3"></textarea><label>Correct answer</label><select class="correct-input"></select></div></article></template>
   <script src="cloudflare-config.js"></script><script src="script.js"></script>
 </body>
