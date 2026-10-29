@@ -63,12 +63,12 @@ document.querySelector('#quiz-form').addEventListener('submit', async event => {
     if (q.type === 'mcq') { q.options = item.querySelector('.options-input').value.split('\n').map(x => x.trim()).filter(Boolean); q.correctIndex = Number(item.querySelector('.correct-input').value); }
     return q;
   });
-  button.disabled = true; status('#create-status', 'Saving your quiz…');
+  button.disabled = true; status('#create-status', 'Sending your quiz to the cloud… by very reliable internet pigeon.');
   try {
     const result = await api('/api/quizzes', {method:'POST', headers:{'Content-Type':'application/json','X-Teacher-Code':document.querySelector('#create-teacher-code').value}, body:JSON.stringify({title:document.querySelector('#quiz-title').value.trim(), createdBy:userName, questions})});
     document.querySelector('#created-code-value').textContent = result.code;
     document.querySelector('#created-code').classList.remove('hidden');
-    status('#create-status', 'Quiz saved.');
+    status('#create-status', 'Quiz saved! The pigeon has excellent punctuality.');
     document.querySelector('#created-code').scrollIntoView({behavior:'smooth',block:'center'});
   } catch (error) { status('#create-status', error.message, true); }
   finally { button.disabled = false; }
@@ -85,7 +85,7 @@ async function openQuiz(code) {
   const result = await api('/api/quizzes/' + encodeURIComponent(code));
   currentQuiz = result;
   document.querySelector('#quiz-heading').textContent = result.title;
-  document.querySelector('#quiz-student').textContent = 'For ' + userName + ' · Code ' + result.code;
+  document.querySelector('#quiz-student').textContent = 'Good luck, ' + userName + ' — may the commas be with you. Quiz code: ' + result.code;
   const container = document.querySelector('#quiz-questions'); container.replaceChildren();
   result.questions.forEach((question, index) => {
     const block = node('article', 'take-question'); block.append(node('span','question-number','QUESTION ' + (index + 1)), node('h3','',question.prompt));
@@ -93,7 +93,7 @@ async function openQuiz(code) {
       question.options.forEach((option, optionIndex) => {
         const label = node('label','radio-option'); const input = node('input'); input.type='radio'; input.name='answer-' + question.id; input.value=String(optionIndex); input.required=true; label.append(input,node('span','',option)); block.append(label);
       });
-    } else { const answer = node('textarea','student-answer'); answer.name='answer-' + question.id; answer.maxLength=2000; answer.rows=4; answer.placeholder='Write your answer…'; answer.required=true; block.append(answer); }
+    } else { const answer = node('textarea','student-answer'); answer.name='answer-' + question.id; answer.maxLength=2000; answer.rows=4; answer.placeholder='Use your words. Dramatic hand gestures are optional.'; answer.required=true; block.append(answer); }
     container.append(block);
   });
   status('#quiz-status',''); show('quiz-screen');
@@ -103,7 +103,7 @@ document.querySelector('#take-quiz-form').addEventListener('submit', async event
   const answers = currentQuiz.questions.map(q => { const field = event.currentTarget.elements['answer-' + q.id]; return {questionId:q.id, answer:field.type === 'radio' ? field.value : field.value.trim()}; });
   try {
     const result = await api('/api/quizzes/' + encodeURIComponent(currentQuiz.code) + '/submissions', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({studentName:userName,answers})});
-    status('#quiz-status', result.totalMcq ? 'Your answers are saved. Multiple-choice score: ' + result.score + ' / ' + result.totalMcq + '.' : 'Your answers are saved. Your teacher can now read them.');
+    status('#quiz-status', result.totalMcq ? (result.score === result.totalMcq ? 'Perfect score! Your brain deserves a tiny party. ' : result.score === 0 ? 'Answers saved! The commas believe in you. ' : 'Answers saved! Your brain did some excellent thinking. ') + 'Score: ' + result.score + ' / ' + result.totalMcq + '.' : 'Answers safely delivered to Mrs Wrong. Release the tiny celebration pigeon.');
     button.textContent='Submitted ✓';
   } catch (error) { status('#quiz-status',error.message,true); button.disabled=false; }
 });
@@ -113,7 +113,7 @@ document.querySelector('#results-form').addEventListener('submit', async event =
   const code=document.querySelector('#results-quiz-code').value.trim(); const teacherCode=document.querySelector('#results-teacher-code').value;
   try {
     currentResults=await api('/api/quizzes/'+encodeURIComponent(code)+'/submissions',{headers:{'X-Teacher-Code':teacherCode}});
-    renderResults(currentResults); status('#results-status',currentResults.submissions.length+' submission'+(currentResults.submissions.length===1?'':'s')+' for “'+currentResults.title+'”.');
+    renderResults(currentResults); status('#results-status',currentResults.submissions.length ? currentResults.submissions.length+' submission'+(currentResults.submissions.length===1?'':'s')+' for “'+currentResults.title+'”. The answer vault is open!' : 'No answers yet. The answer vault is dramatically empty.');
   } catch(error) { status('#results-status',error.message,true); }
   finally { button.disabled=false; }
 });
