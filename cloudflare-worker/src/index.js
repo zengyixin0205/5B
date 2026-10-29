@@ -28,33 +28,35 @@ async function reserveAiRequest(request, env) {
 }
 
 async function createAiText(env, task, body) {
-  if (!env.OPENAI_API_KEY) return {error:'ChatGPT is not connected yet. Mrs Wrong needs to add an OpenAI API key in Cloudflare.'};
   if (task === 'passage') {
     const topic=cleanText(body.topic); const notes=cleanText(body.notes);
     if (topic.length < 2 || topic.length > 180) return {error:'Give the passage a topic (up to 180 characters).'};
     if (notes.length > 300) return {error:'Keep the extra notes to 300 characters or fewer.'};
-    return {instructions:'You are ChatGPT, a cheerful, careful English teaching assistant for a Class 5 primary school. Write an original, age-appropriate reading passage of about 100–140 words for children around age 10–11. Use clear language, an engaging title, and the supplied topic. Then write one open-ended comprehension question that invites a thoughtful answer. Output only these sections, exactly labelled PASSAGE and OPEN-ENDED QUESTION. Keep the humour kind and classroom-safe.',input:'Topic: '+topic+'\nTeacher notes: '+(notes || 'None')};
+    return {system:'You are a careful English teaching assistant for a Class 5 primary school. Write an original, age-appropriate reading passage of about 100–140 words for children around age 10–11. Use clear language, an engaging title, and the supplied topic. Then write one open-ended comprehension question that invites a thoughtful answer. Output only these sections, exactly labelled PASSAGE and OPEN-ENDED QUESTION. Keep the humour kind and classroom-safe.',input:'Topic: '+topic+'\nTeacher notes: '+(notes || 'None')};
   }
   if (task === 'review') {
     const question=cleanText(body.question); const answer=cleanText(body.answer);
     if (!question || question.length > 4000) return {error:'The question and reading passage must be between 1 and 4,000 characters.'};
     if (!answer || answer.length > 2000) return {error:'The answer must be between 1 and 2,000 characters.'};
-    return {instructions:'You are ChatGPT, a kind and constructive English teaching assistant helping a Class 5 teacher review one anonymised student response. Use age-appropriate, plain English. Point out one thing the answer does well, one useful next step, and whether it answers the question with supporting detail. Be fair to different valid interpretations. Do not assign an official grade or make claims about the student. Keep your feedback concise and clearly label it as a suggestion for the teacher.',input:'Question and passage:\n'+question+'\n\nAnonymised student answer:\n'+answer};
+    return {system:'You are a kind and constructive English teaching assistant helping a Class 5 teacher review one anonymised student response. Use age-appropriate, plain English. Point out one thing the answer does well, one useful next step, and whether it answers the question with supporting detail. Be fair to different valid interpretations. Do not assign an official grade or make claims about the student. Keep your feedback concise and clearly label it as a suggestion for the teacher.',input:'Question and passage:\n'+question+'\n\nAnonymised student answer:\n'+answer};
   }
   return {error:'Choose passage drafting or answer feedback.'};
 }
 
 async function runAiAssistant(env, request, body) {
-  if (!env.OPENAI_API_KEY) return json({error:'ChatGPT is not connected yet. Mrs Wrong needs to add an OpenAI API key in Cloudflare.'},503,request.headers.get('Origin') || '');
+  if (!env.AI) return json({error:'The classroom AI helper is not available right now. Please try again later.'},503,request.headers.get('Origin') || '');
   const task=cleanText(body.task);
   const prepared=await createAiText(env,task,body);
   if (prepared.error) return json({error:prepared.error},400,request.headers.get('Origin') || '');
-  if (!await reserveAiRequest(request,env)) return json({error:'ChatGPT has reached its limit of 10 helper requests from this connection this hour. Try again later.'},429,request.headers.get('Origin') || '');
-  const response=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{'Authorization':'Bearer '+env.OPENAI_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({model:env.OPENAI_MODEL || 'gpt-6-luna',instructions:prepared.instructions,input:prepared.input,max_output_tokens:task==='passage'?1000:700,store:false})});
-  if (!response.ok) return json({error:response.status===401?'The Cloudflare OpenAI API key was rejected. Please check the key in Cloudflare.':'ChatGPT could not help just now. Please try again in a moment.'},502,request.headers.get('Origin') || '');
-  const payload=await response.json();
-  const text=(payload.output || []).flatMap(item=>item.content || []).filter(item=>item.type==='output_text').map(item=>item.text || '').join('\n').trim();
-  if (!text) return json({error:'ChatGPT returned an empty reply. Please try again.'},502,request.headers.get('Origin') || '');
+  if (!await reserveAiRequest(request,env)) return json({error:'The AI helper has reached its limit of 10 requests from this connection this hour. Try again later.'},429,request.headers.get('Origin') || '');
+  let payload;
+  try {
+    payload=await env.AI.run('@cf/meta/llama-3.2-1b-instruct',{messages:[{role:'system',content:prepared.system},{role:'user',content:prepared.input}],max_tokens:task==='passage'?700:450,temperature:0.5});
+  } catch (error) {
+    return json({error:'The Llama classroom assistant could not respond just now. Please try again in a moment.'},502,request.headers.get('Origin') || '');
+  }
+  const text=String(payload && (payload.response || payload.result || '')).trim();
+  if (!text) return json({error:'The Llama assistant returned an empty reply. Please try again.'},502,request.headers.get('Origin') || '');
   return json({text},200,request.headers.get('Origin') || '');
 }
 

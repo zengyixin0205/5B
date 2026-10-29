@@ -32,22 +32,22 @@
       <p class="status" id="home-status" role="status" aria-live="polite"></p>
     </section>
 
-    <section class="screen wide-screen" id="create-screen" aria-labelledby="create-title">
-      <button class="back-button" data-home type="button">← Back to room</button><div class="section-tag">MRS WRONG’S QUIZ WORKSHOP · LAB COAT OPTIONAL</div><h1 id="create-title">Create a quiz<br><em>for the Scraggies.</em></h1><p class="intro">Add open-ended or multiple-choice questions for Class 5B. The answer key stays undercover, like a very studious spy.</p>
+    <section class="screen wide-screen teacher-workspace" id="create-screen" aria-labelledby="create-title">
+      <button class="back-button" data-home type="button">← Back to room</button><div class="section-tag">CLASS 5B · TEACHER WORKSPACE</div><h1 id="create-title">Quiz<br><em>builder</em></h1><p class="intro">Prepare a quiz for your class. Add a reading passage, choose question types, and set the correct answers before publishing.</p>
       <section class="ai-helper" aria-labelledby="passage-helper-title">
-        <div class="ai-helper-heading"><span class="ai-badge">CHATGPT HELPER</span><h2 id="passage-helper-title">Need a passage?</h2><p>Give ChatGPT a topic and it will draft a short reading passage with an open-ended question. You can edit it before it joins the quiz.</p></div>
+        <div class="ai-helper-heading"><span class="ai-badge">LLAMA 3.2 · AI ASSISTANT</span><h2 id="passage-helper-title">Reading passage assistant</h2><p>Enter a topic to draft an age-appropriate passage and an open-ended comprehension question. Review and edit the draft before adding it to the quiz.</p></div>
         <form id="passage-form" class="ai-form">
           <label for="passage-topic">Passage topic</label><input id="passage-topic" maxlength="180" placeholder="e.g. A curious Scraggy at the library" required>
           <label for="passage-notes">Anything to include? <small>Optional</small></label><input id="passage-notes" maxlength="300" placeholder="Vocabulary, theme, or plot idea">
-          <button class="secondary-button" type="submit">Ask ChatGPT to draft it ✨</button><p class="status" id="passage-status" role="status" aria-live="polite"></p>
+          <button class="secondary-button" type="submit">Generate passage draft</button><p class="status" id="passage-status" role="status" aria-live="polite"></p>
         </form>
         <div class="ai-result hidden" id="passage-result"><label for="generated-passage">Draft passage and question · edit freely</label><textarea id="generated-passage" rows="9"></textarea><button class="secondary-button" id="use-generated-passage" type="button">Add as an open-ended question</button></div>
-        <p class="ai-privacy">ChatGPT receives the topic and optional notes. Don’t put student names or private information here. AI tools need an OpenAI API key configured in Cloudflare.</p>
+        <p class="ai-privacy">The topic and optional notes are sent to Cloudflare Workers AI using Meta Llama 3.2 1B. Do not include student names or private information. Please review AI-generated material before use.</p>
       </section>
       <form id="quiz-form" class="builder-form">
-        <label for="quiz-title">Quiz title</label><input id="quiz-title" maxlength="80" placeholder="e.g. The Case of the Missing Full Stop" required>
-        <div id="builder-questions"></div><button class="secondary-button" id="add-question" type="button">＋ Add another brain-bender</button>
-        <button class="button" type="submit">Make quiz magic <span>↗</span></button><p class="status" id="create-status" role="status" aria-live="polite"></p>
+        <label for="quiz-title">QUIZ TITLE</label><input id="quiz-title" maxlength="80" placeholder="e.g. Reading comprehension: habitats" required>
+        <div id="builder-questions"></div><button class="secondary-button" id="add-question" type="button">＋ Add question</button>
+        <button class="button" type="submit">Publish quiz <span>↗</span></button><p class="status" id="create-status" role="status" aria-live="polite"></p>
       </form>
       <div class="created-code hidden" id="created-code" role="status"><span>QUIZ CREATED · SIX DIGITS OF PURE MYSTERY</span><strong id="created-code-value"></strong><p>Share this code with the class. Mrs Wrong uses the same code to open the answer vault, so keep it within the class.</p><button class="secondary-button" id="copy-code" type="button">Copy code</button></div>
     </section>
@@ -58,13 +58,13 @@
     </section>
 
     <section class="screen wide-screen" id="results-screen" aria-labelledby="results-title">
-      <button class="back-button" data-home type="button">← Back to room</button><div class="section-tag">MRS WRONG’S SCRAGGIE ANSWERS · SHHH!</div><h1 id="results-title">The answer<br><em>vault.</em></h1><p class="intro">Enter the quiz code to see submissions. Anyone with the code can open this vault. Clicking ChatGPT feedback sends that answer and its question to OpenAI, without the student’s name. It suggests; Mrs Wrong decides.</p>
+      <button class="back-button" data-home type="button">← Back to room</button><div class="section-tag">CLASS 5B · TEACHER WORKSPACE</div><h1 id="results-title">Quiz<br><em>responses</em></h1><p class="intro">Enter the quiz code to review submissions. Anyone with the code can view its answers. Llama feedback sends the question and anonymised answer to Cloudflare Workers AI; it is a suggestion for the teacher, not an official grade.</p>
       <form id="results-form" class="stack-form"><label for="results-quiz-code">Quiz code (six digits of mystery)</label><input id="results-quiz-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required><button class="button" type="submit">Open the answer vault <span>↗</span></button></form>
       <p class="status" id="results-status" role="status" aria-live="polite"></p><div id="results-list"></div><button class="secondary-button hidden" id="export-results" type="button">Download the answer scroll (CSV) ↓</button>
     </section>
   </main>
   <footer><a class="brand" href="#"><img class="brand-mark-image footer-mark" src="assets/scraggy-pokemon.webp" alt="Scraggy Pokémon"></a><span>THE SCRAGGIES · MRS WRONG’S ENGLISH CLASS</span><span>YOUR TEST · OUR CONFUSION</span></footer>
-  <template id="question-template"><article class="builder-question"><div class="builder-question-head"><b class="question-number"></b><button class="remove-question" type="button" aria-label="Remove question">Remove (bye, question)</button></div><label class="prompt-label">Question or reading passage</label><textarea class="prompt-input" maxlength="4000" rows="5" placeholder="What is the opposite of a vampire? A sleepy carrot?" required></textarea><label>Question type</label><select class="type-input"><option value="open">Open-ended (bring the brain!)</option><option value="mcq">Multiple choice (choose wisely-ish)</option></select><div class="options-area hidden"><label>Answer choices <small>One choice per line, please and thank you</small></label><textarea class="options-input" maxlength="1000" rows="4" placeholder="Choice 1&#10;Choice 2&#10;Choice 3"></textarea><label>Correct answer</label><select class="correct-input"></select></div></article></template>
+  <template id="question-template"><article class="builder-question"><div class="builder-question-head"><b class="question-number"></b><button class="remove-question" type="button" aria-label="Remove question">Remove question</button></div><label class="prompt-label">Question or reading passage</label><textarea class="prompt-input" maxlength="4000" rows="5" placeholder="Enter the passage or question for students" required></textarea><label>Question type</label><select class="type-input"><option value="open">Open-ended response</option><option value="mcq">Multiple choice</option></select><div class="options-area hidden"><label>Answer choices <small>Enter one choice per line</small></label><textarea class="options-input" maxlength="1000" rows="4" placeholder="Choice 1&#10;Choice 2&#10;Choice 3"></textarea><label>Correct answer</label><select class="correct-input"></select></div></article></template>
   <script src="cloudflare-config.js"></script><script src="script.js"></script>
 </body>
 </html>

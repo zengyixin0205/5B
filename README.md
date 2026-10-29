@@ -10,17 +10,17 @@ A name-first English quiz website for Class 5B. Teachers can create quizzes with
 
 GitHub Pages hosts the website. Cloudflare Workers handles quiz creation, scoring, answer review, and AI requests. Cloudflare D1 stores quiz content, submissions, and short-lived hashed IP counters used to limit AI requests.
 
-## ChatGPT helper
+## AI classroom assistant
 
-The teacher quiz builder can draft a short reading passage with an open-ended question. The answer vault can request suggested feedback on an open-ended answer. Feedback is a suggestion for the teacher, not an automatic grade. Passage topics and reviewed answer text are sent to the OpenAI API; the review request does not include the student's name. Avoid entering personal details.
+The teacher quiz builder can draft a short reading passage with an open-ended question. The answer vault can request suggested feedback on an open-ended answer. Feedback is a suggestion for the teacher, not an automatic grade. AI requests use Cloudflare Workers AI with Meta's `@cf/meta/llama-3.2-1b-instruct` model. Passage topics and reviewed answer text are sent to Cloudflare; review requests do not include the student's name. Avoid entering personal details and review generated material before using it.
 
-Add an OpenAI API key to the Cloudflare Worker as a secret. Wrangler will prompt for the key; it is never stored in the repository or sent to the browser:
+The Worker has a Workers AI binding configured in `cloudflare-worker/wrangler.jsonc`; no external API key is required. Deploy with:
 
-    npm exec --yes --package=wrangler@4.155.0 -- wrangler secret put OPENAI_API_KEY --config cloudflare-worker/wrangler.jsonc
+    npm exec --yes --package=wrangler@4.155.0 -- wrangler deploy --config cloudflare-worker/wrangler.jsonc
 
-The default model is `gpt-6-luna`; set the optional `OPENAI_MODEL` Worker variable to change it. API usage may incur separate charges. See [OpenAI API pricing](https://platform.openai.com/pricing).
+TinyLlama (`@cf/tinyllama/tinyllama-1.1b-chat-v1.0`) is no longer listed as an available Workers AI model, so the site uses Cloudflare's currently supported 1B Llama instruction model instead. See the [Cloudflare model catalog](https://developers.cloudflare.com/workers-ai/models/).
 
-The AI endpoint allows up to 10 requests per hour per connection. Its per-hour counter stores a hashed address and is automatically removed after 48 hours.
+The AI endpoint allows up to 10 requests per hour per connection. Its per-hour counter stores a hashed address and is automatically removed after 48 hours. Workers AI usage is billed according to Cloudflare's [model pricing](https://developers.cloudflare.com/workers-ai/models/llama-3.2-1b-instruct/).
 
 ## Quiz code and answer privacy
 
@@ -28,11 +28,7 @@ The same six-digit quiz code opens a quiz and its answer submissions, because no
 
 ## Deploy
 
-The website deploys from the `main` branch through GitHub Pages. Deploy Worker changes with:
-
-    npm exec --yes --package=wrangler@4.155.0 -- wrangler deploy --config cloudflare-worker/wrangler.jsonc
-
-Apply new D1 schema migrations to the remote database with:
+The website deploys from the `main` branch through GitHub Pages. Apply new D1 schema migrations to the remote database with:
 
     npm exec --yes --package=wrangler@4.155.0 -- wrangler d1 migrations apply 5b-english-board --remote --config cloudflare-worker/wrangler.jsonc
 

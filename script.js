@@ -80,7 +80,7 @@ let generatedPassage = '';
 document.querySelector('#passage-form').addEventListener('submit', async event => {
   event.preventDefault();
   const button=event.currentTarget.querySelector('button[type="submit"]'); button.disabled=true;
-  status('#passage-status','ChatGPT is thinking very hard about punctuation…');
+  status('#passage-status','Preparing a passage draft…');
   try {
     const result=await api('/api/teacher/assistant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({task:'passage',topic:document.querySelector('#passage-topic').value.trim(),notes:document.querySelector('#passage-notes').value.trim()})});
     generatedPassage=result.text;
@@ -152,10 +152,10 @@ function renderResults(data) {
       const item=node('div','result-answer'); item.append(node('b','',answer.prompt),node('p','',answer.answer));
       if(answer.type==='mcq') item.append(node('small',answer.correct?'answer-correct':'answer-wrong',answer.correct?'Correct':'Correct answer: '+answer.correctAnswer));
       else {
-        const review=node('button','secondary-button review-answer','Ask ChatGPT for feedback'); review.type='button';
+        const review=node('button','secondary-button review-answer','Request AI feedback'); review.type='button';
         const feedback=node('p','ai-feedback hidden'); feedback.setAttribute('aria-live','polite');
         review.addEventListener('click',async()=>{
-          review.disabled=true; feedback.classList.remove('hidden'); feedback.textContent='ChatGPT is reading carefully. It promises not to mark in red ink…';
+          review.disabled=true; feedback.classList.remove('hidden'); feedback.textContent='Llama is reviewing this answer…';
           try { const result=await api('/api/teacher/assistant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({task:'review',question:answer.prompt,answer:answer.answer})}); feedback.textContent=result.text; }
           catch(error) { feedback.textContent=error.message; }
           finally { review.disabled=false; }

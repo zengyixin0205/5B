@@ -42,5 +42,33 @@ body{background:#fff8e4;color:#3b2918;font-family:"DM Sans",sans-serif}
 .brand-mark-image{display:block;width:54px;height:54px;object-fit:contain;flex:0 0 auto}.footer-mark{width:44px;height:44px}.welcome-art{height:230px}.pokemon-feature{display:block;width:min(100%,210px);height:205px;object-fit:contain;position:relative;z-index:1;filter:drop-shadow(0 5px 0 #49382320)}.welcome-art small{z-index:2}
 @media(max-width:600px){.brand-mark-image{width:43px;height:43px}.footer-mark{width:37px;height:37px}.welcome-art{height:205px}.pokemon-feature{height:180px}}
 
-/* ChatGPT teacher tools */
+/* AI teacher tools */
 .ai-helper{margin:24px 0;padding:20px;background:#f6df9b;border:2px solid #493823;border-radius:8px;box-shadow:0 3px 0 #493823}.ai-helper-heading h2{font:600 25px Fredoka,Manrope,sans-serif;margin:10px 0 6px}.ai-helper-heading p,.ai-privacy{font-size:12px;line-height:1.55;color:#5d4a32}.ai-badge{display:inline-block;padding:5px 8px;background:#493823;color:#fff2c5;border-radius:4px;font:600 8px "DM Mono";letter-spacing:.1em}.ai-form{display:grid;gap:8px;margin-top:15px}.ai-form label,.ai-result label{font:600 9px "DM Mono";letter-spacing:.07em;color:#78674e}.ai-form input,.ai-result textarea{width:100%;padding:12px;border:2px solid #4a3925;border-radius:5px;background:#fffdf4;color:var(--ink);font:13px "DM Sans"}.ai-form .secondary-button,.ai-result .secondary-button{margin-top:6px}.ai-privacy{margin:14px 0 0;font-size:10px}.ai-result{display:grid;gap:9px;margin-top:14px}.ai-result textarea{resize:vertical;line-height:1.55}.result-answer .review-answer{margin:3px 0 5px}.ai-feedback{padding:12px;margin:7px 0 0;background:#f6df9b;border-radius:5px;font-size:12px;line-height:1.6;white-space:pre-wrap}
+
+/* Formal teacher-facing quiz editor */
+#create-screen.teacher-workspace{width:min(100%,880px);padding:36px 42px 44px;background:#fff;border:1px solid #d7dce4;border-top:5px solid #243b5a;border-radius:8px;box-shadow:0 8px 28px #243b5a12}
+#create-screen.teacher-workspace h1{font:700 clamp(39px,6vw,56px)/1.05 Manrope,sans-serif;letter-spacing:-.045em;color:#20334d;margin:14px 0 10px}
+#create-screen.teacher-workspace h1 em{font-style:normal;color:#315b87}
+#create-screen.teacher-workspace .section-tag{font:600 10px "DM Mono";letter-spacing:.13em;color:#53677f}
+#create-screen.teacher-workspace>.intro{max-width:680px;margin:0;color:#596575;font-size:14px}
+#create-screen .back-button{color:#334b67;border:1px solid #c8d0da;background:#fff;box-shadow:none;border-radius:5px}
+#create-screen .ai-helper{padding:22px;background:#f4f7fb;border:1px solid #d6dee8;border-left:4px solid #315b87;border-radius:6px;box-shadow:none}
+#create-screen .ai-badge{background:#e4ebf3;color:#294767;border:1px solid #cbd7e5;border-radius:3px;font-size:8px}
+#create-screen .ai-helper-heading h2{font:700 20px Manrope,sans-serif;color:#243b5a;margin:10px 0 6px}
+#create-screen .ai-helper-heading p,#create-screen .ai-privacy{color:#5f6c7b}
+#create-screen .ai-form label,#create-screen .ai-result label,#create-screen .builder-form>label{font:600 10px "DM Sans";letter-spacing:.035em;color:#394b61}
+#create-screen .ai-form input,#create-screen .ai-result textarea,#create-screen .builder-form input,#create-screen .builder-form textarea,#create-screen .builder-form select{border:1px solid #c9d2dd;border-radius:4px;background:#fff;color:#27364a;font:14px "DM Sans";box-shadow:none}
+#create-screen .ai-form input:focus,#create-screen .ai-result textarea:focus,#create-screen .builder-form input:focus,#create-screen .builder-form textarea:focus,#create-screen .builder-form select:focus{border-color:#4778ae;box-shadow:0 0 0 3px #4778ae20}
+#create-screen .back-button,#create-screen .secondary-button{font:600 12px "DM Sans";color:#294767;border:1px solid #bac8d8;border-radius:4px;background:#fff;box-shadow:none;padding:10px 13px}
+#create-screen .secondary-button:hover{background:#f3f6fa;border-color:#8299b3}
+#create-screen .builder-form{gap:14px;margin-top:22px}
+#create-screen .builder-question{padding:20px;margin:4px 0;background:#fff;border:1px solid #d5dce4;border-radius:5px;box-shadow:none}
+#create-screen .builder-question label{font:600 11px "DM Sans";letter-spacing:0;color:#394b61;margin:14px 0 7px}
+#create-screen .builder-question-head{padding-bottom:11px;border-bottom:1px solid #e7ebf0}
+#create-screen .question-number{font:700 13px "DM Sans";color:#294767}
+#create-screen .remove-question{font:500 12px "DM Sans";color:#8e4c4c}
+#create-screen .button{background:#294f78;color:#fff;border:1px solid #294f78;border-radius:4px;box-shadow:none;font:600 14px "DM Sans";padding:13px 18px}
+#create-screen .button:hover{background:#203e60;transform:none}
+#create-screen .button span{color:#fff}
+#create-screen .created-code{background:#f1f6f2;border:1px solid #cbd9cd;border-radius:5px}
+@media(max-width:600px){#create-screen.teacher-workspace{padding:25px 17px 30px;border-radius:6px}#create-screen .ai-helper{padding:17px}#create-screen .builder-question{padding:16px}}
